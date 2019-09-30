@@ -21,6 +21,17 @@ typedef struct {
     PyArrayObject *u;
 } PyOSQPData;
 
+/* OSQP Problem data in bare c_float arrays */
+typedef struct {
+    c_int    n;
+    c_int    m;
+    csc     *P;
+    csc     *A;
+    c_float *q;
+    c_float *l;
+    c_float *u;
+} OSQPData;
+
 
 // Get integer type from OSQP setup
 static int get_int_type(void) {
@@ -146,21 +157,38 @@ static OSQPData * create_data(PyOSQPData * py_d) {
 
     // Allocate OSQPData structure
     OSQPData * data = (OSQPData *)c_malloc(sizeof(OSQPData));
+    data->P = (csc *)c_malloc(sizeof(csc));
+    data->A = (csc *)c_malloc(sizeof(csc));
 
     // Populate OSQPData structure
     data->n = py_d->n;
     data->m = py_d->m;
-    data->P = csc_matrix(data->n, data->n,
-                         (c_int) PyArray_DIM(py_d->Px, 0),  // nnz
-                         (c_float *)PyArray_DATA(py_d->Px),
-                         (c_int *)PyArray_DATA(py_d->Pi),
-                         (c_int *)PyArray_DATA(py_d->Pp));
+    csc_set_data(data->P, data->n, data->n,
+                 (c_int) PyArray_DIM(py_d->Px, 0),  // nnz
+                 (c_float *)PyArray_DATA(py_d->Px),
+                 (c_int *)PyArray_DATA(py_d->Pi),
+                 (c_int *)PyArray_DATA(py_d->Pp));
+
+    // data->P = csc_matrix(data->n, data->n,
+    //                      (c_int) PyArray_DIM(py_d->Px, 0),  // nnz
+    //                      (c_float *)PyArray_DATA(py_d->Px),
+    //                      (c_int *)PyArray_DATA(py_d->Pi),
+    //                      (c_int *)PyArray_DATA(py_d->Pp));
+
     data->q = (c_float *)PyArray_DATA(py_d->q);
-    data->A = csc_matrix(data->m, data->n,
-                         (c_int) PyArray_DIM(py_d->Ax, 0),  // nnz
-                         (c_float *)PyArray_DATA(py_d->Ax),
-                         (c_int *)PyArray_DATA(py_d->Ai),
-                         (c_int *)PyArray_DATA(py_d->Ap));
+
+    csc_set_data(data->A, data->m, data->n,
+                 (c_int) PyArray_DIM(py_d->Ax, 0),  // nnz
+                 (c_float *)PyArray_DATA(py_d->Ax),
+                 (c_int *)PyArray_DATA(py_d->Ai),
+                 (c_int *)PyArray_DATA(py_d->Ap));
+
+    // data->A = csc_matrix(data->m, data->n,
+    //                      (c_int) PyArray_DIM(py_d->Ax, 0),  // nnz
+    //                      (c_float *)PyArray_DATA(py_d->Ax),
+    //                      (c_int *)PyArray_DATA(py_d->Ai),
+    //                      (c_int *)PyArray_DATA(py_d->Ap));
+
     data->l = (c_float *)PyArray_DATA(py_d->l);
     data->u = (c_float *)PyArray_DATA(py_d->u);
 

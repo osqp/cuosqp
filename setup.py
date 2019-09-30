@@ -21,7 +21,7 @@ lib_subdir = []
 # Check if windows linux or mac to pass flag
 if system() == 'Windows':
     if sys.version_info.major == 3:
-        cmake_args += ['-G', 'Visual Studio 14 2015']
+        cmake_args += ['-G', 'Visual Studio 15 2017']
     else:
         cmake_args += ['-G', 'Visual Studio 9 2008']
     # Differentiate between 32-bit and 64-bit
@@ -89,65 +89,65 @@ if system() == 'Windows' and sys.version_info[0] == 3:
 # Add OSQP compiled library
 extra_objects = [os.path.join('extension', 'src', lib_name)]
 
-'''
-Copy C sources for code generation
-'''
+# '''
+# Copy C sources for code generation
+# '''
 
-# Create codegen directory
-osqp_codegen_sources_dir = os.path.join('module', 'codegen', 'sources')
-if os.path.exists(osqp_codegen_sources_dir):
-    sh.rmtree(osqp_codegen_sources_dir)
-os.makedirs(osqp_codegen_sources_dir)
+# # Create codegen directory
+# osqp_codegen_sources_dir = os.path.join('module', 'codegen', 'sources')
+# if os.path.exists(osqp_codegen_sources_dir):
+#     sh.rmtree(osqp_codegen_sources_dir)
+# os.makedirs(osqp_codegen_sources_dir)
 
-# OSQP C files
-cfiles = [os.path.join(osqp_dir, 'src', f)
-          for f in os.listdir(os.path.join(osqp_dir, 'src'))
-          if f.endswith('.c') and f not in ('cs.c', 'ctrlc.c', 'polish.c',
-                                            'lin_sys.c')]
-cfiles += [os.path.join(qdldl_dir, f)
-           for f in os.listdir(qdldl_dir)
-           if f.endswith('.c')]
-cfiles += [os.path.join(qdldl_dir, 'qdldl_sources', 'src', f)
-           for f in os.listdir(os.path.join(qdldl_dir, 'qdldl_sources', 'src'))]
-osqp_codegen_sources_c_dir = os.path.join(osqp_codegen_sources_dir, 'src')
-if os.path.exists(osqp_codegen_sources_c_dir):  # Create destination directory
-    sh.rmtree(osqp_codegen_sources_c_dir)
-os.makedirs(osqp_codegen_sources_c_dir)
-for f in cfiles:  # Copy C files
-    copy(f, osqp_codegen_sources_c_dir)
+# # OSQP C files
+# cfiles = [os.path.join(osqp_dir, 'src', f)
+#           for f in os.listdir(os.path.join(osqp_dir, 'src'))
+#           if f.endswith('.c') and f not in ('cs.c', 'ctrlc.c', 'polish.c',
+#                                             'lin_sys.c')]
+# cfiles += [os.path.join(qdldl_dir, f)
+#            for f in os.listdir(qdldl_dir)
+#            if f.endswith('.c')]
+# cfiles += [os.path.join(qdldl_dir, 'qdldl_sources', 'src', f)
+#            for f in os.listdir(os.path.join(qdldl_dir, 'qdldl_sources', 'src'))]
+# osqp_codegen_sources_c_dir = os.path.join(osqp_codegen_sources_dir, 'src')
+# if os.path.exists(osqp_codegen_sources_c_dir):  # Create destination directory
+#     sh.rmtree(osqp_codegen_sources_c_dir)
+# os.makedirs(osqp_codegen_sources_c_dir)
+# for f in cfiles:  # Copy C files
+#     copy(f, osqp_codegen_sources_c_dir)
 
-# List with OSQP H files
-hfiles = [os.path.join(osqp_dir, 'include', f)
-          for f in os.listdir(os.path.join(osqp_dir, 'include'))
-          if f.endswith('.h') and f not in ('qdldl_types.h', 'osqp_configure.h',
-                                            'cs.h', 'ctrlc.h', 'polish.h',
-                                            'lin_sys.h')]
-hfiles += [os.path.join(qdldl_dir, f)
-           for f in os.listdir(qdldl_dir)
-           if f.endswith('.h')]
-hfiles += [os.path.join(qdldl_dir, 'qdldl_sources', 'include', f)
-           for f in os.listdir(os.path.join(qdldl_dir, 'qdldl_sources', 'include'))
-           if f.endswith('.h')]
-osqp_codegen_sources_h_dir = os.path.join(osqp_codegen_sources_dir, 'include')
-if os.path.exists(osqp_codegen_sources_h_dir):  # Create destination directory
-    sh.rmtree(osqp_codegen_sources_h_dir)
-os.makedirs(osqp_codegen_sources_h_dir)
-for f in hfiles:  # Copy header files
-    copy(f, osqp_codegen_sources_h_dir)
+# # List with OSQP H files
+# hfiles = [os.path.join(osqp_dir, 'include', f)
+#           for f in os.listdir(os.path.join(osqp_dir, 'include'))
+#           if f.endswith('.h') and f not in ('qdldl_types.h', 'osqp_configure.h',
+#                                             'cs.h', 'ctrlc.h', 'polish.h',
+#                                             'lin_sys.h')]
+# hfiles += [os.path.join(qdldl_dir, f)
+#            for f in os.listdir(qdldl_dir)
+#            if f.endswith('.h')]
+# hfiles += [os.path.join(qdldl_dir, 'qdldl_sources', 'include', f)
+#            for f in os.listdir(os.path.join(qdldl_dir, 'qdldl_sources', 'include'))
+#            if f.endswith('.h')]
+# osqp_codegen_sources_h_dir = os.path.join(osqp_codegen_sources_dir, 'include')
+# if os.path.exists(osqp_codegen_sources_h_dir):  # Create destination directory
+#     sh.rmtree(osqp_codegen_sources_h_dir)
+# os.makedirs(osqp_codegen_sources_h_dir)
+# for f in hfiles:  # Copy header files
+#     copy(f, osqp_codegen_sources_h_dir)
 
-# List with OSQP configure files
-configure_files = [os.path.join(osqp_dir, 'configure', 'osqp_configure.h.in'),
-                   os.path.join(qdldl_dir, 'qdldl_sources', 'configure', 'qdldl_types.h.in')]
-osqp_codegen_sources_configure_dir = os.path.join(osqp_codegen_sources_dir, 'configure')
-if os.path.exists(osqp_codegen_sources_configure_dir):  # Create destination directory
-    sh.rmtree(osqp_codegen_sources_configure_dir)
-os.makedirs(osqp_codegen_sources_configure_dir)
-for f in configure_files:  # Copy configure files
-    copy(f, osqp_codegen_sources_configure_dir)
+# # List with OSQP configure files
+# configure_files = [os.path.join(osqp_dir, 'configure', 'osqp_configure.h.in'),
+#                    os.path.join(qdldl_dir, 'qdldl_sources', 'configure', 'qdldl_types.h.in')]
+# osqp_codegen_sources_configure_dir = os.path.join(osqp_codegen_sources_dir, 'configure')
+# if os.path.exists(osqp_codegen_sources_configure_dir):  # Create destination directory
+#     sh.rmtree(osqp_codegen_sources_configure_dir)
+# os.makedirs(osqp_codegen_sources_configure_dir)
+# for f in configure_files:  # Copy configure files
+#     copy(f, osqp_codegen_sources_configure_dir)
 
-# Copy cmake files
-copy(os.path.join(osqp_dir, 'src',     'CMakeLists.txt'), osqp_codegen_sources_c_dir)
-copy(os.path.join(osqp_dir, 'include', 'CMakeLists.txt'), osqp_codegen_sources_h_dir)
+# # Copy cmake files
+# copy(os.path.join(osqp_dir, 'src',     'CMakeLists.txt'), osqp_codegen_sources_c_dir)
+# copy(os.path.join(osqp_dir, 'include', 'CMakeLists.txt'), osqp_codegen_sources_h_dir)
 
 
 class build_ext_osqp(build_ext):

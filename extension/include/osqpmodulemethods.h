@@ -7,23 +7,23 @@
 
 static PyObject * OSQP_module_solve(OSQP *self, PyObject *args, PyObject *kwargs) {
   c_int n, m;  // Problem dimensions
-  c_int exitflag_setup, exitflag_solve;
+  c_int exitflag_setup, exitflag_solve, status_val;
 
   // Variables for setup
-  PyOSQPData *pydata;
-  OSQPData * data;
-  OSQPSettings * settings;
-  OSQPWorkspace * workspace;  // Pointer to C workspace structure
+  PyOSQPData   *pydata;
+  OSQPData     *data;
+  OSQPSettings *settings;
+  OSQPSolver   *solver;  // Pointer to C solver structure
   PyArrayObject *Px, *Pi, *Pp, *q, *Ax, *Ai, *Ap, *l, *u;
 
 
   // Variables for solve
   // Create status object
-  PyObject * status;
+  PyObject *status;
   // Create obj_val object
-  PyObject * obj_val;
+  PyObject *obj_val;
   // Create solution objects
-  PyObject * x, *y, *prim_inf_cert, *dual_inf_cert;
+  PyObject *x, *y, *prim_inf_cert, *dual_inf_cert;
   // Define info related variables
   static char *argparse_string_info;
   PyObject *info_list;
@@ -35,6 +35,8 @@ static PyObject * OSQP_module_solve(OSQP *self, PyObject *args, PyObject *kwargs
 
   npy_intp nd[1];
   npy_intp md[1];
+
+  printf("000\n");
 
   static char *kwlist[] = {"dims",                     // nvars and ncons
 			   "Px", "Pi", "Pp", "q",      // Cost function
@@ -109,6 +111,8 @@ static PyObject * OSQP_module_solve(OSQP *self, PyObject *args, PyObject *kwargs
     return (PyObject *) NULL;
   }
 
+  printf("111\n");
+
   // Create Data from parsed vectors
   pydata = create_pydata(n, m, Px, Pi, Pp, q, Ax, Ai, Ap, l, u);
   data = create_data(pydata);
@@ -116,19 +120,28 @@ static PyObject * OSQP_module_solve(OSQP *self, PyObject *args, PyObject *kwargs
   // Perform setup and solve
   // release the GIL
   Py_BEGIN_ALLOW_THREADS;
-  // Create Workspace object
-  exitflag_setup = osqp_setup(&(workspace), data, settings);
-  exitflag_solve = osqp_solve(workspace);
+
+  printf("222\n");
+
+  // Create Solver object
+  exitflag_setup = osqp_setup(&solver, data->P, data->q, data->A,
+                              data->l, data->u, data->m, data->n, settings);
+
+  printf("333\n");
+
+  exitflag_solve = osqp_solve(solver);
   // reacquire the GIL
   Py_END_ALLOW_THREADS;
+
+  printf("444\n");
   
   // Cleanup data and settings
   free_data(data, pydata);
   c_free(settings);
 
   // Check successful setup and solve
-  if (exitflag_setup){ // Workspace allocation error
-    PyErr_SetString(PyExc_ValueError, "Workspace allocation error!");
+  if (exitflag_setup){ // Solver allocation error
+    PyErr_SetString(PyExc_ValueError, "Solver allocation error!");
     return (PyObject *) NULL;
   }
 
@@ -138,25 +151,27 @@ static PyObject * OSQP_module_solve(OSQP *self, PyObject *args, PyObject *kwargs
   }
 
   // Temporary solution
-  nd[0] = (npy_intp)workspace->data->n;  // Dimensions in R^n
-  md[0] = (npy_intp)workspace->data->m;  // Dimensions in R^m
+  osqp_get_dimensions(self->solver, &m, &n);
+  nd[0] = (npy_intp)n;  // Dimensions in R^n
+  md[0] = (npy_intp)m;  // Dimensions in R^m
 
   // If problem is not primal or dual infeasible store it
-  if ((workspace->info->status_val != OSQP_PRIMAL_INFEASIBLE) &&
-      (workspace->info->status_val != OSQP_PRIMAL_INFEASIBLE_INACCURATE) &&
-      (workspace->info->status_val != OSQP_DUAL_INFEASIBLE) &&
-      (workspace->info->status_val != OSQP_DUAL_INFEASIBLE_INACCURATE)){
+  status_val = self->solver->info->status_val;
+  if ((status_val != OSQP_PRIMAL_INFEASIBLE) &&
+      (status_val != OSQP_PRIMAL_INFEASIBLE_INACCURATE) &&
+      (status_val != OSQP_DUAL_INFEASIBLE) &&
+      (status_val != OSQP_DUAL_INFEASIBLE_INACCURATE)){
 
     // Primal and dual solutions
-    x = (PyObject *)PyArrayFromCArray(workspace->solution->x, nd);
-    y = (PyObject *)PyArrayFromCArray(workspace->solution->y, md);
+    x = (PyObject *)PyArrayFromCArray(solver->solution->x, nd);
+    y = (PyObject *)PyArrayFromCArray(solver->solution->y, md);
 
     // Infeasibility certificates -> None values
     prim_inf_cert = PyArray_EMPTY(1, nd, NPY_OBJECT, 0);
     dual_inf_cert = PyArray_EMPTY(1, md, NPY_OBJECT, 0);
 
-  } else if (workspace->info->status_val == OSQP_PRIMAL_INFEASIBLE ||
-	     workspace->info->status_val == OSQP_PRIMAL_INFEASIBLE_INACCURATE) {
+  } else if (status_val == OSQP_PRIMAL_INFEASIBLE ||
+	           status_val == OSQP_PRIMAL_INFEASIBLE_INACCURATE) {
     // primal infeasible
 
     // Primal and dual solution arrays -> None values
@@ -164,13 +179,13 @@ static PyObject * OSQP_module_solve(OSQP *self, PyObject *args, PyObject *kwargs
     y = PyArray_EMPTY(1, md, NPY_OBJECT, 0);
 
     // Primal infeasibility certificate
-    prim_inf_cert = (PyObject *)PyArrayFromCArray(workspace->delta_y, md);
+    prim_inf_cert = (PyObject *)PyArrayFromCArray(solver->solution->prim_inf_cert, md);
 
     // Dual infeasibility certificate -> None values
     dual_inf_cert = PyArray_EMPTY(1, nd, NPY_OBJECT, 0);
 
     // Set objective value to infinity
-    workspace->info->obj_val = NPY_INFINITY;
+    solver->info->obj_val = NPY_INFINITY;
 
   } else {
     // dual infeasible
@@ -183,21 +198,21 @@ static PyObject * OSQP_module_solve(OSQP *self, PyObject *args, PyObject *kwargs
     prim_inf_cert = PyArray_EMPTY(1, md, NPY_OBJECT, 0);
 
     // Dual infeasibility certificate
-    dual_inf_cert = (PyObject *)PyArrayFromCArray(workspace->delta_x, nd);
+    dual_inf_cert = (PyObject *)PyArrayFromCArray(solver->solution->dual_inf_cert, nd);
 
     // Set objective value to -infinity
-    workspace->info->obj_val = -NPY_INFINITY;
+    solver->info->obj_val = -NPY_INFINITY;
   }
 
   /*  CREATE INFO OBJECT */
   // Store status string
-  status = PyUnicode_FromString(workspace->info->status);
+  status = PyUnicode_FromString(solver->info->status);
 
   // Store obj_val
-  if (workspace->info->status_val == OSQP_NON_CVX) {	// non convex
+  if (status_val == OSQP_NON_CVX) {	// non convex
     obj_val = PyFloat_FromDouble(Py_NAN);
   } else {
-    obj_val = PyFloat_FromDouble(workspace->info->obj_val);
+    obj_val = PyFloat_FromDouble(solver->info->obj_val);
   }
 
 #ifdef PROFILING
@@ -205,69 +220,71 @@ static PyObject * OSQP_module_solve(OSQP *self, PyObject *args, PyObject *kwargs
 #ifdef DLONG
 
 #ifdef DFLOAT
-  argparse_string_info = "LOLLOfffffffLf";
+  argparse_string_info = "LOLLfLOfffffff";
 #else
-  argparse_string_info = "LOLLOdddddddLd";
+  argparse_string_info = "LOLLdLOddddddd";
 #endif
 
 #else
 
 #ifdef DFLOAT
-  argparse_string_info = "iOiiOfffffffif";
+  argparse_string_info = "iOiifiOfffffff";
 #else
-  argparse_string_info = "iOiiOdddddddid";
+  argparse_string_info = "iOiidiOddddddd";
 #endif
 
 #endif /* DLONG */
 
   info_list = Py_BuildValue(argparse_string_info,
-			    workspace->info->iter,
+			    solver->info->iter,
 			    status,
-			    workspace->info->status_val,
-			    workspace->info->status_polish,
+			    solver->info->status_val,
+          solver->info->rho_updates,
+			    solver->info->rho_estimate,
+			    solver->info->status_polish,
 			    obj_val,
-			    workspace->info->pri_res,
-			    workspace->info->dua_res,
-			    workspace->info->setup_time,
-			    workspace->info->solve_time,
-			    workspace->info->update_time,
-			    workspace->info->polish_time,
-			    workspace->info->run_time,
-			    workspace->info->rho_updates,
-			    workspace->info->rho_estimate
+			    solver->info->pri_res,
+			    solver->info->dua_res,
+			    solver->info->setup_time,
+			    solver->info->solve_time,
+			    solver->info->update_time,
+			    solver->info->polish_time,
+			    solver->info->run_time
 			    );
 #else /* PROFILING */
 
 #ifdef DLONG
 
 #ifdef DFLOAT
-  argparse_string = "LOLLOffLf";
+  argparse_string = "LOLLfLOff";
 #else
-  argparse_string = "LOLLOddLd";
+  argparse_string = "LOLLdLOdd";
 #endif
 
 #else
 
 #ifdef DFLOAT
-  argparse_string = "iOiiOffif";
+  argparse_string = "iOiifiOff";
 #else
-  argparse_string = "iOiiOddid";
+  argparse_string = "iOiidiOdd";
 #endif
 
 #endif /* DLONG */
 
   info_list = Py_BuildValue(argparse_string_info,
-			    workspace->info->iter,
+			    solver->info->iter,
 			    status,
-			    workspace->info->status_val,
-			    workspace->info->status_polish,
+			    solver->info->status_val,
+          solver->info->rho_updates,
+			    solver->info->rho_estimate,
+			    solver->info->status_polish,
 			    obj_val,
-			    workspace->info->pri_res,
-			    workspace->info->dua_res,
-			    workspace->info->rho_updates,
-			    workspace->info->rho_estimate,
+			    solver->info->pri_res,
+			    solver->info->dua_res
 			    );
 #endif /* PROFILING */
+
+  printf("555\n");
 
   info = PyObject_CallObject((PyObject *) &OSQP_info_Type, info_list);
 
@@ -283,11 +300,13 @@ static PyObject * OSQP_module_solve(OSQP *self, PyObject *args, PyObject *kwargs
   // Delete results list
   Py_DECREF(results_list);
 
-  // Cleanup workspace
-  if (osqp_cleanup(workspace)) {
-    PyErr_SetString(PyExc_ValueError, "Workspace deallocation error!");
+  // Cleanup solver
+  if (osqp_cleanup(solver)) {
+    PyErr_SetString(PyExc_ValueError, "Solver deallocation error!");
     return (PyObject *) NULL;
   }
+
+  printf("555\n");
 
   // Return results    
   return results;
@@ -381,7 +400,7 @@ static PyObject *OSQP_constant(OSQP *self, PyObject *args) {
 
 static PyMethodDef OSQP_module_methods[] = {
 					    {"solve", (PyCFunction)OSQP_module_solve,METH_VARARGS|METH_KEYWORDS, PyDoc_STR("Setup solve and cleanup OSQP problem. This function releases GIL.")},
-					        {"constant", (PyCFunction)OSQP_constant, METH_VARARGS, PyDoc_STR("Return internal OSQP constant")},
+					    {"constant", (PyCFunction)OSQP_constant, METH_VARARGS, PyDoc_STR("Return internal OSQP constant")},
 					    {NULL, NULL}		/* sentinel */
 };
 

@@ -7,42 +7,56 @@
 
  typedef struct {
     PyObject_HEAD
-    c_int iter;                /* number of iterations taken */
+    c_int   iter;              /* number of iterations taken */
     PyUnicodeObject * status;  /* status unicode string, e.g. 'Solved' */
-    c_int status_val;          /* status as c_int, defined in constants.h */
+    c_int   status_val;        /* status as c_int, defined in constants.h */
+
+    c_int   rho_updates;       /* number of rho updates */
+    c_float rho_estimate;      /* optimal rho estimate */
+
     c_int status_polish;       /* polish status: successful (1), not (0) */
+
     c_float obj_val;           /* primal objective */
     c_float pri_res;           /* norm of primal residual */
     c_float dua_res;           /* norm of dual residual */
 
-    #ifdef PROFILING
+#ifdef PROFILING
     c_float setup_time;        /* time taken for setup phase (seconds) */
     c_float solve_time;        /* time taken for solve phase (seconds) */
     c_float update_time;       /* time taken for update phase (seconds) */
     c_float polish_time;       /* time taken for polish phase (seconds) */
     c_float run_time;          /* total time taken (seconds) */
-    #endif
-
-    c_int rho_updates;         /* number of rho updates */
-    c_float rho_estimate;       /* optimal rho estimate */
+#endif
 
 } OSQP_info;
 
 
 static PyMemberDef OSQP_info_members[] = {
 #ifdef DLONG
-    {"iter", T_LONGLONG, offsetof(OSQP_info, iter), READONLY, "Primal solution"},
+    {"iter", T_LONGLONG, offsetof(OSQP_info, iter), READONLY, "Number of iterations"},
 #else   // DLONG
-    {"iter", T_INT, offsetof(OSQP_info, iter), READONLY, "Primal solution"},
+    {"iter", T_INT, offsetof(OSQP_info, iter), READONLY, "Number of iterations"},
 #endif  // DLONG
 
     {"status", T_OBJECT, offsetof(OSQP_info, status), READONLY, "Solver status"},
 
 #ifdef DLONG
-    {"status_val", T_LONGLONG, offsetof(OSQP_info, status_val), READONLY, "Solver status value"},
+    {"status_val",  T_LONGLONG, offsetof(OSQP_info, status_val),  READONLY, "Solver status value"},
+    {"rho_updates", T_LONGLONG, offsetof(OSQP_info, rho_updates), READONLY, "Number of rho updates"},
+#else   // DLONG
+    {"status_val",  T_INT, offsetof(OSQP_info, status_val),  READONLY, "Solver status value"},
+    {"rho_updates", T_INT, offsetof(OSQP_info, rho_updates), READONLY, "Number of rho updates"},
+#endif  // DLONG
+
+#ifdef DFLOAT
+    {"rho_estimate", T_FLOAT, offsetof(OSQP_info, rho_estimate), READONLY, "Optimal rho estimate"},
+#else   // DFLOAT
+    {"rho_estimate", T_DOUBLE, offsetof(OSQP_info, rho_estimate), READONLY, "Optimal rho estimate"},
+#endif  // DFLOAT
+
+#ifdef DLONG
     {"status_polish", T_LONGLONG, offsetof(OSQP_info, status_polish), READONLY, "Polishing status value"},
 #else   // DLONG
-    {"status_val", T_INT, offsetof(OSQP_info, status_val), READONLY, "Solver status value"},
     {"status_polish", T_INT, offsetof(OSQP_info, status_polish), READONLY, "Polishing status value"},
 #endif  // DLONG
 
@@ -58,31 +72,19 @@ static PyMemberDef OSQP_info_members[] = {
 
 #ifdef PROFILING
 #ifdef DFLOAT
-    {"setup_time", T_FLOAT, offsetof(OSQP_info, setup_time), READONLY, "Setup time"},
-    {"solve_time", T_FLOAT, offsetof(OSQP_info, solve_time), READONLY, "Solve time"},
+    {"setup_time",  T_FLOAT, offsetof(OSQP_info, setup_time),  READONLY, "Setup time"},
+    {"solve_time",  T_FLOAT, offsetof(OSQP_info, solve_time),  READONLY, "Solve time"},
     {"update_time", T_FLOAT, offsetof(OSQP_info, update_time), READONLY, "Update time"},
     {"polish_time", T_FLOAT, offsetof(OSQP_info, polish_time), READONLY, "Polish time"},
-    {"run_time", T_FLOAT, offsetof(OSQP_info, run_time), READONLY, "Total run time"},
+    {"run_time",    T_FLOAT, offsetof(OSQP_info, run_time),    READONLY, "Total run time"},
 #else   // DFLOAT
-    {"setup_time", T_DOUBLE, offsetof(OSQP_info, setup_time), READONLY, "Setup time"},
-    {"solve_time", T_DOUBLE, offsetof(OSQP_info, solve_time), READONLY, "Solve time"},
+    {"setup_time",  T_DOUBLE, offsetof(OSQP_info, setup_time),  READONLY, "Setup time"},
+    {"solve_time",  T_DOUBLE, offsetof(OSQP_info, solve_time),  READONLY, "Solve time"},
     {"update_time", T_DOUBLE, offsetof(OSQP_info, update_time), READONLY, "Update time"},
     {"polish_time", T_DOUBLE, offsetof(OSQP_info, polish_time), READONLY, "Polish time"},
-    {"run_time", T_DOUBLE, offsetof(OSQP_info, run_time), READONLY, "Total run time"},
+    {"run_time",    T_DOUBLE, offsetof(OSQP_info, run_time),    READONLY, "Total run time"},
 #endif  // DFLOAT
 #endif  // PROFILING
-
-#ifdef DLONG
-    {"rho_updates", T_LONGLONG, offsetof(OSQP_info, rho_updates), READONLY, "Number of rho updates"},
-#else   // DLONG
-    {"rho_updates", T_INT, offsetof(OSQP_info, rho_updates), READONLY, "Number of rho updates"},
-#endif  // DLONG
-
-#ifdef DFLOAT
-    {"rho_estimate", T_FLOAT, offsetof(OSQP_info, rho_estimate), READONLY, "Optimal rho estimate"},
-#else   // DFLOAT
-    {"rho_estimate", T_DOUBLE, offsetof(OSQP_info, rho_estimate), READONLY, "Optimal rho estimate"},
-#endif  // DFLOAT
 
     {NULL}
 };
@@ -96,17 +98,17 @@ static c_int OSQP_info_init( OSQP_info * self, PyObject *args) {
 #ifdef DLONG
 
 #ifdef DFLOAT
-    static char * argparse_string = "LULLffffffffLf";
+    static char * argparse_string = "LULLfLffffffff";
 #else
-    static char * argparse_string = "LULLddddddddLd";
+    static char * argparse_string = "LULLdLdddddddd";
 #endif
 
 #else   // DLONG
 
 #ifdef DFLOAT
-    static char * argparse_string = "iUiiffffffffif";
+    static char * argparse_string = "iUiififfffffff";
 #else
-    static char * argparse_string = "iUiiddddddddid";
+    static char * argparse_string = "iUiididddddddd";
 #endif
 
 #endif  // DLONG
@@ -118,17 +120,17 @@ static c_int OSQP_info_init( OSQP_info * self, PyObject *args) {
 #ifdef DLONG
 
 #ifdef DFLOAT
-    static char * argparse_string = "LULLfffLf";
+    static char * argparse_string = "LULLfLfff";
 #else
-    static char * argparse_string = "LULLdddLd";
+    static char * argparse_string = "LULLdLddd";
 #endif
 
 #else   // DLONG
 
 #ifdef DFLOAT
-    static char * argparse_string = "iUiifffif";
+    static char * argparse_string = "iUiififff";
 #else
-    static char * argparse_string = "iUiidddid";
+    static char * argparse_string = "iUiididdd";
 #endif
 
 #endif  // DLONG
@@ -141,6 +143,8 @@ static c_int OSQP_info_init( OSQP_info * self, PyObject *args) {
                           &(self->iter),
                           &(self->status),
                           &(self->status_val),
+                          &(self->rho_updates),
+                          &(self->rho_estimate),
                           &(self->status_polish),
                           &(self->obj_val),
                           &(self->pri_res),
@@ -150,10 +154,8 @@ static c_int OSQP_info_init( OSQP_info * self, PyObject *args) {
                           &(self->solve_time),
                           &(self->update_time),
                           &(self->polish_time),
-                          &(self->run_time),
+                          &(self->run_time)
 #endif
-                          &(self->rho_updates),
-                          &(self->rho_estimate)
 			              )) {
         return -1;
     }

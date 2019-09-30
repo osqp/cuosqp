@@ -6,6 +6,7 @@
 #include "numpy/npy_math.h"         // For infinity values
 #include "structmember.h"           // Python members structure (to store results)
 #include "osqp.h"                   // OSQP API
+#include "glob_opts.h"
 
 /* The PyInt variable is a PyLong in Python3.x.
  */
@@ -18,7 +19,7 @@
 // OSQP Object type
 typedef struct {
     PyObject_HEAD
-    OSQPWorkspace * workspace;  // Pointer to C workspace structure
+    OSQPSolver *solver;  // Pointer to C solver structure
 } OSQP;
 
 static PyTypeObject OSQP_Type;
@@ -27,7 +28,7 @@ static PyTypeObject OSQP_Type;
 #include "osqputilspy.h"        // Utilities functions
 #include "osqpinfopy.h"         // Info object
 #include "osqpresultspy.h"      // Results object
-#include "osqpworkspacepy.h"    // OSQP workspace
+//#include "osqpworkspacepy.h"    // OSQP workspace
 #include "osqpobjectpy.h"       // OSQP object
 #include "osqpmodulemethods.h"  // OSQP module methods independently from any OSQP object
 
