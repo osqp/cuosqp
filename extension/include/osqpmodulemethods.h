@@ -115,7 +115,7 @@ static PyObject * OSQP_module_solve(OSQP *self, PyObject *args, PyObject *kwargs
 
   // Perform setup and solve
   // release the GIL
-  Py_BEGIN_ALLOW_THREADS;
+  //Py_BEGIN_ALLOW_THREADS;
 
   // Create Solver object
   exitflag_setup = osqp_setup(&solver, data->P, data->q, data->A,
@@ -123,7 +123,7 @@ static PyObject * OSQP_module_solve(OSQP *self, PyObject *args, PyObject *kwargs
 
   exitflag_solve = osqp_solve(solver);
   // reacquire the GIL
-  Py_END_ALLOW_THREADS;
+  //Py_END_ALLOW_THREADS;
   
   // Cleanup data and settings
   free_data(data, pydata);
@@ -141,12 +141,12 @@ static PyObject * OSQP_module_solve(OSQP *self, PyObject *args, PyObject *kwargs
   }
 
   // Temporary solution
-  osqp_get_dimensions(self->solver, &m, &n);
+  osqp_get_dimensions(solver, &m, &n);
   nd[0] = (npy_intp)n;  // Dimensions in R^n
   md[0] = (npy_intp)m;  // Dimensions in R^m
 
   // If problem is not primal or dual infeasible store it
-  status_val = self->solver->info->status_val;
+  status_val = solver->info->status_val;
   if ((status_val != OSQP_PRIMAL_INFEASIBLE) &&
       (status_val != OSQP_PRIMAL_INFEASIBLE_INACCURATE) &&
       (status_val != OSQP_DUAL_INFEASIBLE) &&
