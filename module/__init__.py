@@ -1,3 +1,3 @@
-from osqp.interface import OSQP
-from osqp.interface import solve
-from osqp._osqp import constant
+from osqpcuda.interface import OSQP
+from osqpcuda.interface import solve
+from osqpcuda._osqp import constant

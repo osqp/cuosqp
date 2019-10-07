@@ -367,14 +367,18 @@ static PyObject *OSQP_constant(OSQP *self, PyObject *args) {
         return Py_BuildValue("i", OSQP_TIME_LIMIT_REACHED);
     }
 
-	// Linear system solvers
-	if(!strcmp(constant_name, "QDLDL_SOLVER")){
-		return Py_BuildValue("i", QDLDL_SOLVER);
-	}
+    // Linear system solvers
+    if(!strcmp(constant_name, "QDLDL_SOLVER")){
+        return Py_BuildValue("i", QDLDL_SOLVER);
+    }
 
-	if(!strcmp(constant_name, "MKL_PARDISO_SOLVER")){
-		return Py_BuildValue("i", MKL_PARDISO_SOLVER);
-	}
+    if(!strcmp(constant_name, "MKL_PARDISO_SOLVER")){
+        return Py_BuildValue("i", MKL_PARDISO_SOLVER);
+    }
+
+    if(!strcmp(constant_name, "CUDA_PCG_SOLVER")){
+        return Py_BuildValue("i", CUDA_PCG_SOLVER);
+    }
 
     // If reached here error
     PyErr_SetString(PyExc_ValueError, "Constant not recognized");

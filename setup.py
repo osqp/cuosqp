@@ -38,6 +38,9 @@ else:  # Linux or Mac
 # Pass Python option to CMake and Python interface compilation
 cmake_args += ['-DPYTHON=ON']
 
+# Pass CUDA option to CMake
+cmake_args += ['-DCUDA_SUPPORT=ON']
+
 # Remove long integers for numpy compatibility
 # https://github.com/numpy/numpy/issues/5906
 # https://github.com/ContinuumIO/anaconda-issues/issues/3823
@@ -81,6 +84,10 @@ library_dirs = []
 libraries = []
 if system() == 'Linux':
     libraries += ['rt']
+    libraries += ['cublas']
+    libraries += ['cusparse']
+    libraries += ['cudart']
+    library_dirs += ['/opt/cuda/lib64']
 if system() == 'Windows' and sys.version_info[0] == 3:
     # They moved the stdio library to another place.
     # We need to include this to fix the dependency
@@ -182,7 +189,7 @@ class build_ext_osqp(build_ext):
         build_ext.build_extensions(self)
 
 
-_osqp = Extension('osqp._osqp',
+_osqp = Extension('osqpcuda._osqp',
                   define_macros=define_macros,
                   libraries=libraries,
                   library_dirs=library_dirs,
@@ -191,10 +198,8 @@ _osqp = Extension('osqp._osqp',
                   sources=sources_files,
                   extra_compile_args=compile_args)
 
-packages = ['osqp',
-            'osqp.codegen',
-            'osqp.tests',
-            'osqppurepy']
+packages = ['osqpcuda',
+            'osqpcuda.tests']
 
 
 # Read README.rst file
@@ -205,14 +210,13 @@ def readme():
 with open('requirements.txt') as f:
     requirements = f.read().splitlines()
 
-setup(name='osqp',
+setup(name='osqpcuda',
       version='0.6.1',
       author='Bartolomeo Stellato, Goran Banjac',
       author_email='bartolomeo.stellato@gmail.com',
       description='OSQP: The Operator Splitting QP Solver',
       long_description=readme(),
-      package_dir={'osqp': 'module',
-                   'osqppurepy': 'modulepurepy'},
+      package_dir={'osqpcuda': 'module'},
       include_package_data=True,  # Include package data from MANIFEST.in
       setup_requires=["numpy >= 1.7"],
       install_requires=requirements,
