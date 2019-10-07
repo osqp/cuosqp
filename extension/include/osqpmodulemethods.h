@@ -36,8 +36,6 @@ static PyObject * OSQP_module_solve(OSQP *self, PyObject *args, PyObject *kwargs
   npy_intp nd[1];
   npy_intp md[1];
 
-  printf("000\n");
-
   static char *kwlist[] = {"dims",                     // nvars and ncons
 			   "Px", "Pi", "Pp", "q",      // Cost function
 			   "Ax", "Ai", "Ap", "l", "u", // Constraints
@@ -111,8 +109,6 @@ static PyObject * OSQP_module_solve(OSQP *self, PyObject *args, PyObject *kwargs
     return (PyObject *) NULL;
   }
 
-  printf("111\n");
-
   // Create Data from parsed vectors
   pydata = create_pydata(n, m, Px, Pi, Pp, q, Ax, Ai, Ap, l, u);
   data = create_data(pydata);
@@ -121,19 +117,13 @@ static PyObject * OSQP_module_solve(OSQP *self, PyObject *args, PyObject *kwargs
   // release the GIL
   Py_BEGIN_ALLOW_THREADS;
 
-  printf("222\n");
-
   // Create Solver object
   exitflag_setup = osqp_setup(&solver, data->P, data->q, data->A,
                               data->l, data->u, data->m, data->n, settings);
 
-  printf("333\n");
-
   exitflag_solve = osqp_solve(solver);
   // reacquire the GIL
   Py_END_ALLOW_THREADS;
-
-  printf("444\n");
   
   // Cleanup data and settings
   free_data(data, pydata);
@@ -284,8 +274,6 @@ static PyObject * OSQP_module_solve(OSQP *self, PyObject *args, PyObject *kwargs
 			    );
 #endif /* PROFILING */
 
-  printf("555\n");
-
   info = PyObject_CallObject((PyObject *) &OSQP_info_Type, info_list);
 
   /* Release the info argument list. */
@@ -305,8 +293,6 @@ static PyObject * OSQP_module_solve(OSQP *self, PyObject *args, PyObject *kwargs
     PyErr_SetString(PyExc_ValueError, "Solver deallocation error!");
     return (PyObject *) NULL;
   }
-
-  printf("555\n");
 
   // Return results    
   return results;
