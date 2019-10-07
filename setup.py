@@ -38,8 +38,8 @@ else:  # Linux or Mac
 # Pass Python option to CMake and Python interface compilation
 cmake_args += ['-DPYTHON=ON']
 
-# Pass CUDA option to CMake
-cmake_args += ['-DCUDA_SUPPORT=ON']
+# Pass CUDA option to CMake. The code should be faster with floats
+cmake_args += ['-DCUDA_SUPPORT=ON', '-DDFLOAT=ON']
 
 # Remove long integers for numpy compatibility
 # https://github.com/numpy/numpy/issues/5906
