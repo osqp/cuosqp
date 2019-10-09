@@ -3,11 +3,11 @@ Python interface module for OSQP solver v0.6.1
 """
 from __future__ import print_function
 from builtins import object
-import osqpcuda._osqp as _osqp  # Internal low level module
+import cuosqp._osqp as _osqp  # Internal low level module
 import numpy as np
 from platform import system
 # import osqp.codegen as cg
-import osqpcuda.utils as utils
+import cuosqp.utils as utils
 import sys
 
 

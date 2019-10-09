@@ -189,7 +189,7 @@ class build_ext_osqp(build_ext):
         build_ext.build_extensions(self)
 
 
-_osqp = Extension('osqpcuda._osqp',
+_osqp = Extension('cuosqp._osqp',
                   define_macros=define_macros,
                   libraries=libraries,
                   library_dirs=library_dirs,
@@ -198,8 +198,8 @@ _osqp = Extension('osqpcuda._osqp',
                   sources=sources_files,
                   extra_compile_args=compile_args)
 
-packages = ['osqpcuda',
-            'osqpcuda.tests']
+packages = ['cuosqp',
+            'cuosqp.tests']
 
 
 # Read README.rst file
@@ -210,13 +210,13 @@ def readme():
 with open('requirements.txt') as f:
     requirements = f.read().splitlines()
 
-setup(name='osqpcuda',
+setup(name='cuosqp',
       version='0.6.1',
       author='Bartolomeo Stellato, Goran Banjac',
       author_email='bartolomeo.stellato@gmail.com',
       description='OSQP: The Operator Splitting QP Solver',
       long_description=readme(),
-      package_dir={'osqpcuda': 'module'},
+      package_dir={'cuosqp': 'module'},
       include_package_data=True,  # Include package data from MANIFEST.in
       setup_requires=["numpy >= 1.7"],
       install_requires=requirements,
