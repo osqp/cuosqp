@@ -42,7 +42,7 @@ static PyObject * OSQP_module_solve(OSQP *self, PyObject *args, PyObject *kwargs
 			   "scaling",
 			   "adaptive_rho", "adaptive_rho_interval",
 			   "adaptive_rho_tolerance", "adaptive_rho_fraction",
-			   "rho", "sigma", "max_iter", "eps_abs", "eps_rel",
+			   "rho", "sigma", "rho_is_vec", "max_iter", "eps_abs", "eps_rel",
 			   "eps_prim_inf", "eps_dual_inf", "alpha", "delta",
 			   "linsys_solver", "polish",
 			   "polish_refine_iter", "verbose",
@@ -54,17 +54,17 @@ static PyObject * OSQP_module_solve(OSQP *self, PyObject *args, PyObject *kwargs
 
   // NB: linsys_solver is enum type which is stored as int (regardless on how c_int is defined).
 #ifdef DFLOAT
-  static char * argparse_string_setup = "(LL)O!O!O!O!O!O!O!O!O!|LLLffffLffffffiLLLLLLf";
+  static char * argparse_string_setup = "(LL)O!O!O!O!O!O!O!O!O!|LLLffffLLffffffiLLLLLLf";
 #else
-  static char * argparse_string_setup = "(LL)O!O!O!O!O!O!O!O!O!|LLLddddLddddddiLLLLLLd";
+  static char * argparse_string_setup = "(LL)O!O!O!O!O!O!O!O!O!|LLLddddLLddddddiLLLLLLd";
 #endif
 
 #else
 
 #ifdef DFLOAT
-  static char * argparse_string_setup = "(ii)O!O!O!O!O!O!O!O!O!|iiiffffiffffffiiiiiiif";
+  static char * argparse_string_setup = "(ii)O!O!O!O!O!O!O!O!O!|iiiffffiiffffffiiiiiiif";
 #else
-  static char * argparse_string_setup = "(ii)O!O!O!O!O!O!O!O!O!|iiiddddiddddddiiiiiiid";
+  static char * argparse_string_setup = "(ii)O!O!O!O!O!O!O!O!O!|iiiddddiiddddddiiiiiiid";
 #endif
 
 #endif
@@ -91,6 +91,7 @@ static PyObject * OSQP_module_solve(OSQP *self, PyObject *args, PyObject *kwargs
 				   &settings->adaptive_rho_fraction,
 				   &settings->rho,
 				   &settings->sigma,
+				   &settings->rho_is_vec,
 				   &settings->max_iter,
 				   &settings->eps_abs,
 				   &settings->eps_rel,
