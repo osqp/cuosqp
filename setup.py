@@ -21,7 +21,7 @@ lib_subdir = []
 # Check if windows linux or mac to pass flag
 if system() == 'Windows':
     if sys.version_info.major == 3:
-        cmake_args += ['-G', 'Visual Studio 14 2015']
+        cmake_args += ['-G', 'Visual Studio 15 2017']
     else:
         cmake_args += ['-G', 'Visual Studio 9 2008']
     # Differentiate between 32-bit and 64-bit
@@ -92,6 +92,10 @@ if system() == 'Windows' and sys.version_info[0] == 3:
     # They moved the stdio library to another place.
     # We need to include this to fix the dependency
     libraries += ['legacy_stdio_definitions']
+    libraries += ['cublas']
+    libraries += ['cusparse']
+    libraries += ['cudart']
+    library_dirs +=["C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v10.1\\lib\\x64"]
 
 # Add OSQP compiled library
 extra_objects = [os.path.join('extension', 'src', lib_name)]
