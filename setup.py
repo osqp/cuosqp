@@ -39,12 +39,7 @@ else:  # Linux or Mac
 cmake_args += ['-DPYTHON=ON']
 
 # Pass CUDA option to CMake. The code should be faster with floats
-cmake_args += ['-DCUDA_SUPPORT=ON', '-DDFLOAT=ON']
-
-# Remove long integers for numpy compatibility
-# https://github.com/numpy/numpy/issues/5906
-# https://github.com/ContinuumIO/anaconda-issues/issues/3823
-cmake_args += ['-DDLONG=OFF']
+cmake_args += ['-DCUDA_SUPPORT=ON', '-DDFLOAT=ON', '-DDLONG=OFF']
 
 # Pass python to compiler launched from setup.py
 define_macros += [('PYTHON', None)]
@@ -58,15 +53,10 @@ cmake_args += ['-DPYTHON_INCLUDE_DIRS=%s' % sysconfig.get_python_inc()]
 current_dir = os.getcwd()
 osqp_dir = os.path.join('osqp_sources')
 osqp_build_dir = os.path.join(osqp_dir, 'build')
-qdldl_dir = os.path.join(osqp_dir, 'lin_sys', 'direct', 'qdldl')
 
 # Interface files
 include_dirs = [
     os.path.join(osqp_dir, 'include'),      # osqp.h
-    os.path.join(qdldl_dir),                # qdldl_interface header to
-                                            # extract workspace for codegen
-    os.path.join(qdldl_dir, "qdldl_sources",
-                            "include"),     # qdldl includes for file types
     os.path.join('extension', 'include'),   # auxiliary .h files
     numpy.get_include()]                    # numpy header files
 
@@ -99,66 +89,6 @@ if system() == 'Windows' and sys.version_info[0] == 3:
 
 # Add OSQP compiled library
 extra_objects = [os.path.join('extension', 'src', lib_name)]
-
-# '''
-# Copy C sources for code generation
-# '''
-
-# # Create codegen directory
-# osqp_codegen_sources_dir = os.path.join('module', 'codegen', 'sources')
-# if os.path.exists(osqp_codegen_sources_dir):
-#     sh.rmtree(osqp_codegen_sources_dir)
-# os.makedirs(osqp_codegen_sources_dir)
-
-# # OSQP C files
-# cfiles = [os.path.join(osqp_dir, 'src', f)
-#           for f in os.listdir(os.path.join(osqp_dir, 'src'))
-#           if f.endswith('.c') and f not in ('cs.c', 'ctrlc.c', 'polish.c',
-#                                             'lin_sys.c')]
-# cfiles += [os.path.join(qdldl_dir, f)
-#            for f in os.listdir(qdldl_dir)
-#            if f.endswith('.c')]
-# cfiles += [os.path.join(qdldl_dir, 'qdldl_sources', 'src', f)
-#            for f in os.listdir(os.path.join(qdldl_dir, 'qdldl_sources', 'src'))]
-# osqp_codegen_sources_c_dir = os.path.join(osqp_codegen_sources_dir, 'src')
-# if os.path.exists(osqp_codegen_sources_c_dir):  # Create destination directory
-#     sh.rmtree(osqp_codegen_sources_c_dir)
-# os.makedirs(osqp_codegen_sources_c_dir)
-# for f in cfiles:  # Copy C files
-#     copy(f, osqp_codegen_sources_c_dir)
-
-# # List with OSQP H files
-# hfiles = [os.path.join(osqp_dir, 'include', f)
-#           for f in os.listdir(os.path.join(osqp_dir, 'include'))
-#           if f.endswith('.h') and f not in ('qdldl_types.h', 'osqp_configure.h',
-#                                             'cs.h', 'ctrlc.h', 'polish.h',
-#                                             'lin_sys.h')]
-# hfiles += [os.path.join(qdldl_dir, f)
-#            for f in os.listdir(qdldl_dir)
-#            if f.endswith('.h')]
-# hfiles += [os.path.join(qdldl_dir, 'qdldl_sources', 'include', f)
-#            for f in os.listdir(os.path.join(qdldl_dir, 'qdldl_sources', 'include'))
-#            if f.endswith('.h')]
-# osqp_codegen_sources_h_dir = os.path.join(osqp_codegen_sources_dir, 'include')
-# if os.path.exists(osqp_codegen_sources_h_dir):  # Create destination directory
-#     sh.rmtree(osqp_codegen_sources_h_dir)
-# os.makedirs(osqp_codegen_sources_h_dir)
-# for f in hfiles:  # Copy header files
-#     copy(f, osqp_codegen_sources_h_dir)
-
-# # List with OSQP configure files
-# configure_files = [os.path.join(osqp_dir, 'configure', 'osqp_configure.h.in'),
-#                    os.path.join(qdldl_dir, 'qdldl_sources', 'configure', 'qdldl_types.h.in')]
-# osqp_codegen_sources_configure_dir = os.path.join(osqp_codegen_sources_dir, 'configure')
-# if os.path.exists(osqp_codegen_sources_configure_dir):  # Create destination directory
-#     sh.rmtree(osqp_codegen_sources_configure_dir)
-# os.makedirs(osqp_codegen_sources_configure_dir)
-# for f in configure_files:  # Copy configure files
-#     copy(f, osqp_codegen_sources_configure_dir)
-
-# # Copy cmake files
-# copy(os.path.join(osqp_dir, 'src',     'CMakeLists.txt'), osqp_codegen_sources_c_dir)
-# copy(os.path.join(osqp_dir, 'include', 'CMakeLists.txt'), osqp_codegen_sources_h_dir)
 
 
 class build_ext_osqp(build_ext):
@@ -215,10 +145,10 @@ with open('requirements.txt') as f:
     requirements = f.read().splitlines()
 
 setup(name='cuosqp',
-      version='0.6.1',
-      author='Bartolomeo Stellato, Goran Banjac',
-      author_email='bartolomeo.stellato@gmail.com',
-      description='OSQP: The Operator Splitting QP Solver',
+      version='0.1.0',
+      author='Michel Schubiger, Goran Banjac',
+      author_email='gbanjac@control.ee.ethz.ch',
+      description='cuOSQP: CUDA Implementation of the OSQP Solver',
       long_description=readme(),
       package_dir={'cuosqp': 'module'},
       include_package_data=True,  # Include package data from MANIFEST.in
