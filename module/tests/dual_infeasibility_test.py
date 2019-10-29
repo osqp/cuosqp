@@ -1,7 +1,6 @@
-# Test osqp python module
-import osqp
-from osqp._osqp import constant
-# import osqppurepy as osqp
+# Test cuosqp python module
+import cuosqp as osqp
+from cuosqp._osqp import constant
 import numpy as np
 from scipy import sparse
 
@@ -43,8 +42,7 @@ class dual_infeasibility_tests(unittest.TestCase):
         res = self.model.solve()
 
         # Assert close
-        self.assertEqual(res.info.status_val,
-                         constant('OSQP_DUAL_INFEASIBLE'))
+        self.assertEqual(res.info.status_val, constant('OSQP_DUAL_INFEASIBLE'))
 
     def test_dual_infeasible_qp(self):
 
@@ -63,8 +61,7 @@ class dual_infeasibility_tests(unittest.TestCase):
         res = self.model.solve()
 
         # Assert close
-        self.assertEqual(res.info.status_val,
-                         constant('OSQP_DUAL_INFEASIBLE'))
+        self.assertEqual(res.info.status_val, constant('OSQP_DUAL_INFEASIBLE'))
 
     def test_primal_and_dual_infeasible_problem(self):
 

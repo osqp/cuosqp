@@ -1,6 +1,5 @@
-# Test osqp python module
-import osqp
-# import osqppurepy as osqp
+# Test cuosqp python module
+import cuosqp as osqp
 import numpy as np
 from scipy import sparse
 import scipy as sp
@@ -30,14 +29,13 @@ class feasibility_tests(unittest.TestCase):
         self.u = np.random.rand(self.m)
         self.l = self.u
         self.opts = {'verbose': False,
-                     'eps_abs': 1e-06,
-                     'eps_rel': 1e-06,
+                     'eps_abs': 5e-05,
+                     'eps_rel': 5e-05,
                      'scaling': True,
-                     'alpha': 1.6,
+                     'adaptive_rho': 0,
+                     'rho': 10,
                      'max_iter': 5000,
-                     'polish': False,
-                     'warm_start': True,
-                     'polish_refine_iter': 4}
+                     'polish': False}
         self.model = osqp.OSQP()
         self.model.setup(P=self.P, q=self.q, A=self.A, l=self.l, u=self.u,
                          **self.opts)
@@ -48,7 +46,7 @@ class feasibility_tests(unittest.TestCase):
         res = self.model.solve()
 
         # Assert close
-        nptest.assert_array_almost_equal(
+        nptest.assert_allclose(
             res.x,
             np.array([-0.0656074, 1.04194398, 0.4756959, -1.64036689,
                       -0.34180168, -0.81696303, -1.06389178, 0.44944554,
@@ -57,6 +55,7 @@ class feasibility_tests(unittest.TestCase):
                       -0.11373645, -0.48115767,  0.25373436, 0.81369707,
                       0.18883475, 0.47000419, -0.24932451, 0.09298623,
                       1.88381076, 0.77536814, -1.35971433, 0.51511176,
-                      0.03317466, 0.90226419]), decimal=3)
-        nptest.assert_array_almost_equal(res.y, np.zeros(self.m), decimal=3)
-        nptest.assert_array_almost_equal(res.info.obj_val, 0., decimal=3)
+                      0.03317466, 0.90226419]),
+            rtol=1e-3, atol=1e-3)
+        nptest.assert_allclose(res.y, np.zeros(self.m), rtol=1e-3, atol=1e-3)
+        nptest.assert_allclose(res.info.obj_val, 0., rtol=1e-3, atol=1e-3)

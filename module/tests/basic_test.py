@@ -1,7 +1,6 @@
-# Test osqp python module
-import osqp
+# Test cuosqp python module
+import cuosqp as osqp
 from osqp._osqp import constant
-# import osqppurepy as osqp
 import numpy as np
 from scipy import sparse
 
@@ -22,8 +21,8 @@ class basic_tests(unittest.TestCase):
         self.n = self.P.shape[0]
         self.m = self.A.shape[0]
         self.opts = {'verbose': False,
-                     'eps_abs': 1e-09,
-                     'eps_rel': 1e-09,
+                     'eps_abs': 1e-06,
+                     'eps_rel': 1e-06,
                      'max_iter': 2500,
                      'rho': 0.1,
                      'adaptive_rho': False,
@@ -39,10 +38,9 @@ class basic_tests(unittest.TestCase):
         res = self.model.solve()
 
         # Assert close
-        nptest.assert_array_almost_equal(res.x, np.array([0., 5.]))
-        nptest.assert_array_almost_equal(res.y, np.array([1.66666667, 0.,
-                                                          1.33333333, 0., 0.]))
-        nptest.assert_array_almost_equal(res.info.obj_val, 20.)
+        nptest.assert_allclose(res.x, np.array([0., 5.]), rtol=1e-4, atol=1e-4)
+        nptest.assert_allclose(res.y, np.array([1.66666667, 0., 1.33333333, 0., 0.]), rtol=1e-4, atol=1e-4)
+        nptest.assert_allclose(res.info.obj_val, 20., rtol=1e-4, atol=1e-4)
 
     def test_update_q(self):
         # Update linear cost
@@ -51,10 +49,9 @@ class basic_tests(unittest.TestCase):
         res = self.model.solve()
 
         # Assert close
-        nptest.assert_array_almost_equal(res.x, np.array([0., 5.]))
-        nptest.assert_array_almost_equal(res.y, np.array([3.33333334, 0.,
-                                                          6.66666667, 0., 0.]))
-        nptest.assert_array_almost_equal(res.info.obj_val, 100.)
+        nptest.assert_allclose(res.x, np.array([0., 5.]), rtol=1e-4, atol=1e-4)
+        nptest.assert_allclose(res.y, np.array([3.33333334, 0., 6.66666667, 0., 0.]), rtol=1e-4, atol=1e-4)
+        nptest.assert_allclose(res.info.obj_val, 100., rtol=1e-4, atol=1e-4)
 
     def test_update_l(self):
         # Update lower bound
@@ -63,10 +60,9 @@ class basic_tests(unittest.TestCase):
         res = self.model.solve()
 
         # Assert close
-        nptest.assert_array_almost_equal(res.x, np.array([0., 5.]))
-        nptest.assert_array_almost_equal(res.y, np.array([1.66666667, 0.,
-                                                          1.33333333, 0., 0.]))
-        nptest.assert_array_almost_equal(res.info.obj_val, 20.)
+        nptest.assert_allclose(res.x, np.array([0., 5.]), rtol=1e-4, atol=1e-4)
+        nptest.assert_allclose(res.y, np.array([1.66666667, 0., 1.33333333, 0., 0.]), rtol=1e-4, atol=1e-4)
+        nptest.assert_allclose(res.info.obj_val, 20., rtol=1e-4, atol=1e-4)
 
     def test_update_u(self):
         # Update lower bound
@@ -75,11 +71,9 @@ class basic_tests(unittest.TestCase):
         res = self.model.solve()
 
         # Assert close
-        nptest.assert_array_almost_equal(res.x, np.array([-1.51515152e-01,
-                                                          -3.33282828e+02]))
-        nptest.assert_array_almost_equal(res.y, np.array([0., 0., 1.33333333,
-                                                          0., 0.]))
-        nptest.assert_array_almost_equal(res.info.obj_val, -1333.4595959614962)
+        nptest.assert_allclose(res.x, np.array([-1.51515152e-01, -3.33282828e+02]), rtol=1e-4, atol=1e-4)
+        nptest.assert_allclose(res.y, np.array([0., 0., 1.33333333, 0., 0.]), rtol=1e-4, atol=1e-4)
+        nptest.assert_allclose(res.info.obj_val, -1333.4595959614962, rtol=1e-4, atol=1e-4)
 
     def test_update_bounds(self):
         # Update lower bound
@@ -90,11 +84,9 @@ class basic_tests(unittest.TestCase):
         res = self.model.solve()
 
         # Assert close
-        nptest.assert_array_almost_equal(res.x, np.array([-0.12727273,
-                                                          -19.94909091]))
-        nptest.assert_array_almost_equal(res.y, np.array([0., 0., 0.,
-                                                          -0.8, 0.]))
-        nptest.assert_array_almost_equal(res.info.obj_val, -80.0890909023583)
+        nptest.assert_allclose(res.x, np.array([-0.12727273, -19.94909091]), rtol=1e-4, atol=1e-4)
+        nptest.assert_allclose(res.y, np.array([0., 0., 0., -0.8, 0.]), rtol=1e-4, atol=1e-4)
+        nptest.assert_allclose(res.info.obj_val, -80.0890909023583, rtol=1e-4, atol=1e-4)
 
     def test_update_max_iter(self):
         self.model.update_settings(max_iter=80)

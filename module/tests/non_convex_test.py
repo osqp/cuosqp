@@ -1,7 +1,6 @@
-# Test osqp python module
-import osqp
-from osqp._osqp import constant
-# import osqppurepy as osqp
+# Test cuosqp python module
+import cuosqp as osqp
+from cuosqp._osqp import constant
 import numpy as np
 from scipy import sparse
 
@@ -23,19 +22,7 @@ class non_convex_tests(unittest.TestCase):
         self.l = -np.inf * np.ones(len(self.u))
         self.model = osqp.OSQP()
 
-    def test_non_convex_small_sigma(self):
-        opts = {'verbose': False, 'sigma': 1e-6}
-        try:
-            # Setup should fail due to (P + sigma I) having a negative eigenvalue
-            test_setup = 1
-            self.model.setup(P=self.P, q=self.q, A=self.A, l=self.l, u=self.u, **opts)
-        except ValueError:
-            test_setup = 0
-
-        # Assert test_setup flag
-        self.assertEqual(test_setup, 0)
-
-    def test_non_convex_big_sigma(self):
+    def test_non_convex(self):
         # Setup workspace with new sigma
         opts = {'verbose': False, 'sigma': 5}
         self.model.setup(P=self.P, q=self.q, A=self.A, l=self.l, u=self.u, **opts)
@@ -47,5 +34,3 @@ class non_convex_tests(unittest.TestCase):
         self.assertEqual(res.info.status_val, constant('OSQP_NON_CVX'))
         nptest.assert_approx_equal(res.info.obj_val, np.nan)
 
-    def test_nan(self):
-        nptest.assert_approx_equal(constant('OSQP_NAN'), np.nan)
