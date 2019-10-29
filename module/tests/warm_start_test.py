@@ -1,6 +1,5 @@
-# Test osqp python module
-import osqp
-# import osqppurepy as osqp
+# Test cuosqp python module
+import cuosqp as osqp
 import numpy as np
 from scipy import sparse
 import scipy as sp
@@ -17,8 +16,8 @@ class warm_start_tests(unittest.TestCase):
         """
         self.opts = {'verbose': False,
                      'adaptive_rho': False,
-                     'eps_abs': 1e-08,
-                     'eps_rel': 1e-08,
+                     'eps_abs': 1e-05,
+                     'eps_rel': 1e-05,
                      'polish': False,
                      'check_termination': 1}
 
