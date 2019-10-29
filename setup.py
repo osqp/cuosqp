@@ -146,7 +146,7 @@ with open('requirements.txt') as f:
 
 setup(name='cuosqp',
       version='0.1.0',
-      author='Michel Schubiger, Goran Banjac',
+      author='Michel Schubiger, Goran Banjac, Bartolomeo Stellato',
       author_email='gbanjac@control.ee.ethz.ch',
       description='cuOSQP: CUDA Implementation of the OSQP Solver',
       long_description=readme(),

@@ -2,7 +2,7 @@ Python interface for CUDA implementation of OSQP
 ================================================
 
 
-Python wrapper for CUDA implementation of `OSQP <https://osqp.org/>`__
+Python wrapper for CUDA implementation of `OSQP <https://osqp.org/>`__.
 
 The OSQP (Operator Splitting Quadratic Program) solver is a numerical
 optimization package for solving problems in the form

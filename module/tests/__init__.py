@@ -1,1 +1,1 @@
-from osqp.interface import OSQP
+from cuosqp.interface import OSQP
