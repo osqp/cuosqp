@@ -7,12 +7,9 @@
 
 /* Create new OSQP Object */
 static c_int OSQP_init(OSQP *self, PyObject *args, PyObject *kwds) {
-	// OSQP *self;
-	// self = PyObject_New(OSQP, &OSQP_Type);
 	if (self == NULL)
 		return -1;
 	self->solver = NULL;
-	// return self;
 	return 0;
 }
 
@@ -362,8 +359,6 @@ static PyObject *OSQP_dimensions(OSQP *self){
 }
 
 
-
-
 static PyObject *OSQP_update_lin_cost(OSQP *self, PyObject *args) {
 
     PyArrayObject *q, *q_cont;
@@ -401,92 +396,6 @@ static PyObject *OSQP_update_lin_cost(OSQP *self, PyObject *args) {
 
 }
 
-// static PyObject *OSQP_update_lower_bound(OSQP *self, PyObject *args){
-
-//     PyArrayObject *l, *l_cont;
-//     c_float * l_arr;
-//     int float_type = get_float_type();
-//     int exitflag = 0;
-
-//     static char * argparse_string = "O!";
-
-//     // Check that the solver is initialized
-//     if (!self->solver) {
-//         PyErr_SetString(PyExc_ValueError, "Solver not initialized!");
-//         return (PyObject *) NULL;
-//     }
-
-//     // Parse arguments
-//     if( !PyArg_ParseTuple(args, argparse_string, &PyArray_Type, &l)) {
-//         return (PyObject *) NULL;
-//     }
-
-//     // Get contiguous data structure
-//     l_cont = get_contiguous(l, float_type);
-
-//     // Copy array into c_float array
-//     l_arr = (c_float *)PyArray_DATA(l_cont);
-
-//     // Update lower bound
-//     exitflag = osqp_update_lower_bound(self->solver, l_arr);
-
-//     // Free data
-//     Py_DECREF(l_cont);
-
-//     if(exitflag){
-//         PyErr_SetString(PyExc_ValueError, "Lower bound update error!");
-//         return (PyObject *) NULL;
-//     }
-
-//     // Return None
-//     Py_INCREF(Py_None);
-//     return Py_None;
-
-// }
-
-// static PyObject *OSQP_update_upper_bound(OSQP *self, PyObject *args){
-
-//     PyArrayObject *u, *u_cont;
-//     c_float * u_arr;
-//     int float_type = get_float_type();
-//     int exitflag = 0;
-
-//     static char * argparse_string = "O!";
-
-//     // Check that the solver is initialized
-//     if (!self->solver) {
-//         PyErr_SetString(PyExc_ValueError, "Solver not initialized!");
-//         return (PyObject *) NULL;
-//     }
-
-//     // Parse arguments
-//     if( !PyArg_ParseTuple(args, argparse_string, &PyArray_Type, &u)) {
-//         return (PyObject *) NULL;
-//     }
-
-//     // Get contiguous data structure
-//     u_cont = get_contiguous(u, float_type);
-
-//     // Copy array into c_float array
-//     u_arr = (c_float *)PyArray_DATA(u_cont);
-
-//     // Update upper bound
-//     exitflag = osqp_update_upper_bound(self->solver, u_arr);
-
-//     // Free data
-//     Py_DECREF(u_cont);
-
-//     if(exitflag){
-//         PyErr_SetString(PyExc_ValueError, "Upper bound update error!");
-//         return (PyObject *) NULL;
-//     }
-
-
-//     // Return None
-//     Py_INCREF(Py_None);
-//     return Py_None;
-// }
-
 
 static PyObject *OSQP_update_bounds(OSQP *self, PyObject *args){
 
@@ -496,12 +405,6 @@ static PyObject *OSQP_update_bounds(OSQP *self, PyObject *args){
     int exitflag = 0;
 
     static char * argparse_string = "O!O!";
-
-    // // Check that the solver is initialized
-    // if (!self->solver) {
-    //     PyErr_SetString(PyExc_ValueError, "Solver not initialized!");
-    //     return (PyObject *) NULL;
-    // }
 
     // Parse arguments
     if( !PyArg_ParseTuple(args, argparse_string,
@@ -563,12 +466,6 @@ static PyObject * OSQP_update_P(OSQP *self, PyObject *args) {
     static char * argparse_string = "O!O!i";
 #endif
 
-    // // Check that the solver is initialized
-    // if (!self->solver) {
-    //     PyErr_SetString(PyExc_ValueError, "Solver not initialized!");
-    //     return (PyObject *) NULL;
-    // }
-
     // Parse arguments
     if( !PyArg_ParseTuple(args, argparse_string,
                           &PyArray_Type, &Px,
@@ -627,12 +524,6 @@ static PyObject * OSQP_update_A(OSQP *self, PyObject *args) {
 #else
     static char * argparse_string = "O!O!i";
 #endif
-
-    // // Check that the solver is initialized
-    // if (!self->solver) {
-    //     PyErr_SetString(PyExc_ValueError, "Solver not initialized!");
-    //     return (PyObject *) NULL;
-    // }
 
 	// Parse arguments
     if( !PyArg_ParseTuple(args, argparse_string,
@@ -694,12 +585,6 @@ static PyObject * OSQP_update_P_A(OSQP *self, PyObject *args) {
 #endif
 
     exitflag = 0;  // Assume successful execution
-
-    // // Check that the solver is initialized
-    // if (!self->solver) {
-    //     PyErr_SetString(PyExc_ValueError, "Solver not initialized!");
-    //     return (PyObject *) NULL;
-    // }
 
 	// Parse arguments
     if( !PyArg_ParseTuple(args, argparse_string,
@@ -810,78 +695,6 @@ static PyObject *OSQP_warm_start(OSQP *self, PyObject *args){
     Py_INCREF(Py_None);
     return Py_None;
 }
-
-// static PyObject *OSQP_warm_start_x(OSQP *self, PyObject *args) {
-
-//     PyArrayObject *x, *x_cont;
-//     c_float * x_arr;
-//     int float_type = get_float_type();
-
-//     static char * argparse_string = "O!";
-
-//     // Check that the solver is initialized
-//     if (!self->solver) {
-//         PyErr_SetString(PyExc_ValueError, "Solver not initialized!");
-//         return (PyObject *) NULL;
-//     }
-
-//     // Parse arguments
-//     if( !PyArg_ParseTuple(args, argparse_string, &PyArray_Type, &x)) {
-//         return (PyObject *) NULL;
-//     }
-
-//     // Get contiguous data structure
-//     x_cont = get_contiguous(x, float_type);
-
-//     // Copy array into c_float array
-//     x_arr = (c_float *)PyArray_DATA(x_cont);
-
-//     // Update linear cost
-//     osqp_warm_start_x(self->solver, x_arr);
-
-//     // Free data
-//     Py_DECREF(x_cont);
-
-//     // Return None
-//     Py_INCREF(Py_None);
-//     return Py_None;
-// }
-
-// static PyObject *OSQP_warm_start_y(OSQP *self, PyObject *args) {
-
-//     PyArrayObject *y, *y_cont;
-//     c_float * y_arr;
-//     int float_type = get_float_type();
-
-//     static char * argparse_string = "O!";
-
-//     // Check that the solver is initialized
-//     if (!self->solver) {
-//         PyErr_SetString(PyExc_ValueError, "Solver not initialized!");
-//         return (PyObject *) NULL;
-//     }
-
-//     // Parse arguments
-//     if( !PyArg_ParseTuple(args, argparse_string, &PyArray_Type, &y)) {
-//         return (PyObject *) NULL;
-//     }
-
-//     // Get contiguous data structure
-//     y_cont = get_contiguous(y, float_type);
-
-//     // Copy array into c_float array
-//     y_arr = (c_float *)PyArray_DATA(y_cont);
-
-//     // Update linear cost
-//     osqp_warm_start_y(self->solver, y_arr);
-
-//     // Free data
-//     Py_DECREF(y_cont);
-
-//     // Return None
-//     Py_INCREF(Py_None);
-//     return Py_None;
-// }
 
 
 static PyObject *OSQP_update_max_iter(OSQP *self, PyObject *args){
@@ -1347,15 +1160,11 @@ static PyMethodDef OSQP_methods[] = {
     {"version",	(PyCFunction)OSQP_version, METH_NOARGS, PyDoc_STR("OSQP version")},
     {"dimensions", (PyCFunction)OSQP_dimensions, METH_NOARGS, PyDoc_STR("Return problem dimensions (n, m)")},
     {"update_lin_cost",	(PyCFunction)OSQP_update_lin_cost, METH_VARARGS, PyDoc_STR("Update OSQP problem linear cost")},
-    // {"update_lower_bound", (PyCFunction)OSQP_update_lower_bound, METH_VARARGS, PyDoc_STR("Update OSQP problem lower bound")},
-    // {"update_upper_bound", (PyCFunction)OSQP_update_upper_bound, METH_VARARGS, PyDoc_STR("Update OSQP problem upper bound")},
     {"update_bounds", (PyCFunction)OSQP_update_bounds, METH_VARARGS, PyDoc_STR("Update OSQP problem bounds")},
     {"update_P", (PyCFunction)OSQP_update_P, METH_VARARGS, PyDoc_STR("Update OSQP problem quadratic cost matrix")},
     {"update_P_A", (PyCFunction)OSQP_update_P_A, METH_VARARGS, PyDoc_STR("Update OSQP problem matrices")},
     {"update_A", (PyCFunction)OSQP_update_A, METH_VARARGS, PyDoc_STR("Update OSQP problem constraint matrix")},
     {"warm_start", (PyCFunction)OSQP_warm_start, METH_VARARGS, PyDoc_STR("Warm start primal and dual variables")},
-    // {"warm_start_x", (PyCFunction)OSQP_warm_start_x, METH_VARARGS, PyDoc_STR("Warm start primal variable")},
-    // {"warm_start_y", (PyCFunction)OSQP_warm_start_y, METH_VARARGS, PyDoc_STR("Warm start dual variable")},
     {"update_max_iter", (PyCFunction)OSQP_update_max_iter, METH_VARARGS, PyDoc_STR("Update OSQP solver setting max_iter")},
     {"update_eps_abs", (PyCFunction)OSQP_update_eps_abs, METH_VARARGS, PyDoc_STR("Update OSQP solver setting eps_abs")},
     {"update_eps_rel", (PyCFunction)OSQP_update_eps_rel, METH_VARARGS, PyDoc_STR("Update OSQP solver setting eps_rel")},
@@ -1371,7 +1180,6 @@ static PyMethodDef OSQP_methods[] = {
     {"update_check_termination", (PyCFunction)OSQP_update_check_termination, METH_VARARGS, PyDoc_STR("Update OSQP solver setting check_termination")},
     {"update_warm_start", (PyCFunction)OSQP_update_warm_start, METH_VARARGS, PyDoc_STR("Update OSQP solver setting warm_start")},
     {"update_time_limit", (PyCFunction)OSQP_update_time_limit, METH_VARARGS, PyDoc_STR("Update OSQP solver setting time_limit")},
-    // {"_get_workspace", (PyCFunction)OSQP_get_workspace, METH_VARARGS, PyDoc_STR("Returns the OSQP workspace struct as a Python dictionary.")},
     {NULL, NULL}		/* sentinel */
 };
 

@@ -82,30 +82,6 @@ static PyArrayObject * PyArrayFromCArray(c_float *arrayin, npy_intp * nd) {
     return arrayout;
 }
 
-// Original function supposed to work (Not in Python 3.6)
-// static PyObject * PyArrayFromCArray(c_float *arrayin, npy_intp * nd,
-//                                          int typenum){
-// 	int i;
-// 	PyObject * arrayout;
-// 	c_float *x_arr;
-//
-// 	 // Allocate solutions
-//     x_arr = PyMem_Malloc(nd[0] * sizeof(c_float));
-//
-// 	// copy elements to x_arr
-// 	for (i=0; i< nd[0]; i++){
-// 		x_arr[i] = arrayin[i];
-//     }
-//
-// 	arrayout = PyArray_SimpleNewFromData(1, nd, typenum, x_arr);
-// 	// Set x to own x_arr so that it is freed when x is freed
-// 	PyArray_ENABLEFLAGS((PyArrayObject *) arrayout, NPY_ARRAY_OWNDATA);
-//
-//
-//     return arrayout;
-//
-// }
-
 
 /* gets the pointer to the block of contiguous C memory
  * the overhead should be small unless the numpy array has been
@@ -169,12 +145,6 @@ static OSQPData * create_data(PyOSQPData * py_d) {
                  (c_int *)PyArray_DATA(py_d->Pi),
                  (c_int *)PyArray_DATA(py_d->Pp));
 
-    // data->P = csc_matrix(data->n, data->n,
-    //                      (c_int) PyArray_DIM(py_d->Px, 0),  // nnz
-    //                      (c_float *)PyArray_DATA(py_d->Px),
-    //                      (c_int *)PyArray_DATA(py_d->Pi),
-    //                      (c_int *)PyArray_DATA(py_d->Pp));
-
     data->q = (c_float *)PyArray_DATA(py_d->q);
 
     csc_set_data(data->A, data->m, data->n,
@@ -182,12 +152,6 @@ static OSQPData * create_data(PyOSQPData * py_d) {
                  (c_float *)PyArray_DATA(py_d->Ax),
                  (c_int *)PyArray_DATA(py_d->Ai),
                  (c_int *)PyArray_DATA(py_d->Ap));
-
-    // data->A = csc_matrix(data->m, data->n,
-    //                      (c_int) PyArray_DIM(py_d->Ax, 0),  // nnz
-    //                      (c_float *)PyArray_DATA(py_d->Ax),
-    //                      (c_int *)PyArray_DATA(py_d->Ai),
-    //                      (c_int *)PyArray_DATA(py_d->Ap));
 
     data->l = (c_float *)PyArray_DATA(py_d->l);
     data->u = (c_float *)PyArray_DATA(py_d->u);

@@ -114,17 +114,11 @@ static PyObject * OSQP_module_solve(OSQP *self, PyObject *args, PyObject *kwargs
   pydata = create_pydata(n, m, Px, Pi, Pp, q, Ax, Ai, Ap, l, u);
   data = create_data(pydata);
 
-  // Perform setup and solve
-  // release the GIL
-  //Py_BEGIN_ALLOW_THREADS;
-
   // Create Solver object
   exitflag_setup = osqp_setup(&solver, data->P, data->q, data->A,
                               data->l, data->u, data->m, data->n, settings);
 
   exitflag_solve = osqp_solve(solver);
-  // reacquire the GIL
-  //Py_END_ALLOW_THREADS;
   
   // Cleanup data and settings
   free_data(data, pydata);

@@ -11,18 +11,14 @@ def linsys_solver_str_to_int(settings):
             raise TypeError("Setting linsys_solver " +
                             "is required to be a string.")
         linsys_solver_str = linsys_solver_str.lower()
-        if linsys_solver_str == 'qdldl':
-            settings['linsys_solver'] = _osqp.constant('QDLDL_SOLVER')
-        elif linsys_solver_str == 'mkl pardiso':
-            settings['linsys_solver'] = _osqp.constant('MKL_PARDISO_SOLVER')
-        elif linsys_solver_str == 'cuda pcg':
+        if linsys_solver_str == 'cuda pcg':
             settings['linsys_solver'] = _osqp.constant('CUDA_PCG_SOLVER')
         # Default solver: CUDA PCG
         elif linsys_solver_str == '':
             settings['linsys_solver'] = _osqp.constant('CUDA_PCG_SOLVER')
         else:   # default solver: CUDA PCG
             warn("Linear system solver not recognized. " +
-                 "Using default solver QDLDL.")
+                 "Using default solver CUDA PCG.")
             settings['linsys_solver'] = _osqp.constant('CUDA_PCG_SOLVER')
         return settings
 

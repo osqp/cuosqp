@@ -28,7 +28,6 @@ static PyTypeObject OSQP_Type;
 #include "osqputilspy.h"        // Utilities functions
 #include "osqpinfopy.h"         // Info object
 #include "osqpresultspy.h"      // Results object
-//#include "osqpworkspacepy.h"    // OSQP workspace
 #include "osqpobjectpy.h"       // OSQP object
 #include "osqpmodulemethods.h"  // OSQP module methods independently from any OSQP object
 

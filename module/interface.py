@@ -1,12 +1,11 @@
 """
-Python interface module for OSQP solver v0.6.1
+Python interface module for OSQP solver
 """
 from __future__ import print_function
 from builtins import object
 import cuosqp._osqp as _osqp  # Internal low level module
 import numpy as np
 from platform import system
-# import osqp.codegen as cg
 import cuosqp.utils as utils
 import sys
 
@@ -226,53 +225,6 @@ class OSQP(object):
 
         if x is None and y is None:
             raise ValueError("Unrecognized fields")
-
-    # def codegen(self, folder, project_type='', parameters='vectors',
-    #             python_ext_name='emosqp', force_rewrite=False,
-    #             FLOAT=False, LONG=True):
-    #     """
-    #     Generate embeddable C code for the problem
-    #     """
-
-    #     # Check parameters arguments
-    #     if parameters == 'vectors':
-    #         embedded = 1
-    #     elif parameters == 'matrices':
-    #         embedded = 2
-    #     else:
-    #         raise ValueError("Unknown value of 'parameters' argument.")
-
-    #     # Set float and long flags
-    #     if FLOAT:
-    #         float_flag = 'ON'
-    #     else:
-    #         float_flag = 'OFF'
-    #     if LONG:
-    #         long_flag = 'ON'
-    #     else:
-    #         long_flag = 'OFF'
-
-    #     # Check project_type argument
-    #     expectedProject = ('', 'Makefile', 'MinGW Makefiles',
-    #                        'Unix Makefiles', 'CodeBlocks', 'Xcode')
-    #     if project_type not in expectedProject:
-    #         raise ValueError("Unknown value of 'project_type' argument.")
-
-    #     if project_type == 'Makefile':
-    #         if system() == 'Windows':
-    #             project_type = 'MinGW Makefiles'
-    #         elif system() == 'Linux' or system() == 'Darwin':
-    #             project_type = 'Unix Makefiles'
-
-    #     # Convert workspace to Python
-    #     sys.stdout.write("Getting workspace from OSQP object... \t\t\t\t")
-    #     sys.stdout.flush()
-    #     work = self._model._get_workspace()
-    #     print("[done]")
-
-    #     # Generate code with codegen module
-    #     cg.codegen(work, folder, python_ext_name, project_type,
-    #                embedded, force_rewrite, float_flag, long_flag)
 
 
 def solve(P=None, q=None, A=None, l=None, u=None, **settings):
