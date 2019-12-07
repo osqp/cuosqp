@@ -23,4 +23,4 @@ is defined by a positive semidefinite matrix ``P in S^n_+`` and vector
 Documentation
 -------------
 
-The interface is documented `here <https://osqp.org/docs/interfaces/python.html>`.
+The interface is documented `here <https://osqp.org/docs/interfaces/python.html>`__.
