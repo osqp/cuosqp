@@ -117,12 +117,12 @@ static PyOSQPData * create_pydata(c_int n, c_int m,
     py_d->Px = get_contiguous(Px, float_type);
     py_d->Pi = get_contiguous(Pi, int_type);
     py_d->Pp = get_contiguous(Pp, int_type);
-    py_d->q  = get_contiguous(q, float_type);
+    py_d->q  = get_contiguous(q,  float_type);
     py_d->Ax = get_contiguous(Ax, float_type);
     py_d->Ai = get_contiguous(Ai, int_type);
     py_d->Ap = get_contiguous(Ap, int_type);
-    py_d->l = get_contiguous(l, float_type);
-    py_d->u = get_contiguous(u, float_type);
+    py_d->l  = get_contiguous(l,  float_type);
+    py_d->u  = get_contiguous(u,  float_type);
 
     // Return
     return py_d;
@@ -175,19 +175,13 @@ static c_int free_data(OSQPData *data, PyOSQPData * py_d){
     c_free(py_d);
 
     // Clean data structure
-    if (data){
-        if (data->P){
-            c_free(data->P);
-        }
-
-        if (data->A){
-            c_free(data->A);
-        }
-
+    if (data) {
+        if (data->P) c_free(data->P);
+        if (data->A) c_free(data->A);
         c_free(data);
         return 0;
     }
-    else{
+    else {
         return 1;
     }
 

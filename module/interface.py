@@ -1,7 +1,6 @@
 """
 Python interface module for OSQP solver
 """
-from __future__ import print_function
 from builtins import object
 import cuosqp._osqp as _osqp  # Internal low level module
 import numpy as np
@@ -225,19 +224,3 @@ class OSQP(object):
 
         if x is None and y is None:
             raise ValueError("Unrecognized fields")
-
-
-def solve(P=None, q=None, A=None, l=None, u=None, **settings):
-        """
-        Solve problem of the form 
-
-        minimize     1/2 x' * P * x + q' * x
-        subject to   l <= A * x <= u
-
-        solver settings can be specified as additional keyword arguments. 
-        This function disables the GIL because it internally performs 
-        setup, solve and cleanup.
-        """
-
-        unpacked_data, settings = utils.prepare_data(P, q, A, l, u, **settings)
-        return _osqp.solve(*unpacked_data, **settings)

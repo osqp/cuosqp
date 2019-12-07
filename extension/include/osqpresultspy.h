@@ -11,7 +11,7 @@
     PyArrayObject * y;                  // Dual solution
     PyArrayObject * prim_inf_cert;      // Primal infeasibility certificate
     PyArrayObject * dual_inf_cert;      // Dual infeasibility certificate
-    OSQP_info * info;                   // Solver information
+    OSQP_info     * info;               // Solver information
 } OSQP_results;
 
 

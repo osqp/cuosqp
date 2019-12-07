@@ -19,8 +19,3 @@ is defined by a positive semidefinite matrix ``P in S^n_+`` and vector
 ``A in R^{m x n}`` and vectors ``l in R^m U {-inf}^m``,
 ``u in R^m U {+inf}^m``.
 
-
-Documentation
--------------
-
-The interface is documented `here <https://osqp.org/>`__.

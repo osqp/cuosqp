@@ -137,22 +137,10 @@ static PyObject * OSQP_solve(OSQP *self) {
 
 #ifdef PROFILING
 
-#ifdef DLONG
-
-#ifdef DFLOAT 
-    argparse_string = "LOLLfLOfffffff";
-#else
-    argparse_string = "LOLLdLOddddddd";
-#endif
-
-#else
-
 #ifdef DFLOAT
     argparse_string = "iOiifiOfffffff";
 #else
     argparse_string = "iOiidiOddddddd";
-#endif
-
 #endif
 
     info_list = Py_BuildValue(argparse_string,
@@ -173,22 +161,10 @@ static PyObject * OSQP_solve(OSQP *self) {
                     );
 #else
 
-#ifdef DLONG
-
-#ifdef DFLOAT
-    argparse_string = "LOLLfLOff";
-#else
-    argparse_string = "LOLLdLOdd";
-#endif
-
-#else
-
 #ifdef DFLOAT
     argparse_string = "iOiifiOff";
 #else
     argparse_string = "iOiidiOdd";
-#endif
-
 #endif
 
     info_list = Py_BuildValue(argparse_string,
@@ -245,17 +221,6 @@ static PyObject * OSQP_setup(OSQP *self, PyObject *args, PyObject *kwargs) {
                              "check_termination", "warm_start",
                              "time_limit", NULL};        // Settings
 
-#ifdef DLONG
-
-// NB: linsys_solver is enum type which is stored as int (regardless on how c_int is defined).
-
-#ifdef DFLOAT
-    static char * argparse_string = "(LL)O!O!O!O!O!O!O!O!O!|LLLffffLLffffffiLLLLLLf";
-#else
-    static char * argparse_string = "(LL)O!O!O!O!O!O!O!O!O!|LLLddddLLddddddiLLLLLLd";
-#endif
-
-#else
 
 #ifdef DFLOAT
     static char * argparse_string = "(ii)O!O!O!O!O!O!O!O!O!|iiiffffiiffffffiiiiiiif";
@@ -263,7 +228,6 @@ static PyObject * OSQP_setup(OSQP *self, PyObject *args, PyObject *kwargs) {
     static char * argparse_string = "(ii)O!O!O!O!O!O!O!O!O!|iiiddddiiddddddiiiiiiid";
 #endif
 
-#endif
 
     // Check that the solver is not already initialized
     if (self->solver) {
@@ -351,11 +315,7 @@ static PyObject *OSQP_dimensions(OSQP *self){
         return (PyObject *) NULL;
     }
 
-#ifdef DLONG
-    return Py_BuildValue("ll", n, m);
-#else
     return Py_BuildValue("ii", n, m);
-#endif
 }
 
 
@@ -460,11 +420,7 @@ static PyObject * OSQP_update_P(OSQP *self, PyObject *args) {
     int float_type = get_float_type();
     int int_type = get_int_type();
 
-#ifdef DLONG
-    static char * argparse_string = "O!O!L";
-#else
     static char * argparse_string = "O!O!i";
-#endif
 
     // Parse arguments
     if( !PyArg_ParseTuple(args, argparse_string,
@@ -519,11 +475,7 @@ static PyObject * OSQP_update_A(OSQP *self, PyObject *args) {
     int int_type = get_int_type();
     int exitflag = 0;
 
-#ifdef DLONG
-    static char * argparse_string = "O!O!L";
-#else
     static char * argparse_string = "O!O!i";
-#endif
 
 	// Parse arguments
     if( !PyArg_ParseTuple(args, argparse_string,
@@ -578,11 +530,7 @@ static PyObject * OSQP_update_P_A(OSQP *self, PyObject *args) {
     int int_type = get_int_type();
     int exitflag = 0;
 
-#ifdef DLONG
-    static char * argparse_string = "O!O!LO!O!L";
-#else
     static char * argparse_string = "O!O!iO!O!i";
-#endif
 
     exitflag = 0;  // Assume successful execution
 
@@ -701,11 +649,7 @@ static PyObject *OSQP_update_max_iter(OSQP *self, PyObject *args){
 
     c_int max_iter_new;
 
-#ifdef DLONG
-    static char * argparse_string = "L";
-#else
     static char * argparse_string = "i";
-#endif
 
     // Check that the solver is initialized
     if (!self->solver) {
@@ -948,11 +892,7 @@ static PyObject *OSQP_update_polish(OSQP *self, PyObject *args){
 
     c_int polish_new;
 
-#ifdef DLONG
-    static char * argparse_string = "L";
-#else
     static char * argparse_string = "i";
-#endif
 
     // Check that the solver is initialized
     if (!self->solver) {
@@ -978,11 +918,7 @@ static PyObject *OSQP_update_polish_refine_iter(OSQP *self, PyObject *args){
 
     c_int polish_refine_iter_new;
 
-#ifdef DLONG
-    static char * argparse_string = "L";
-#else
     static char * argparse_string = "i";
-#endif
 
     // Check that the solver is initialized
     if (!self->solver) {
@@ -1008,11 +944,7 @@ static PyObject *OSQP_update_verbose(OSQP *self, PyObject *args){
 
     c_int verbose_new;
 
-#ifdef DLONG
-    static char * argparse_string = "L";
-#else
     static char * argparse_string = "i";
-#endif
 
     // Check that the solver is initialized
     if (!self->solver) {
@@ -1038,11 +970,7 @@ static PyObject *OSQP_update_scaled_termination(OSQP *self, PyObject *args){
 
     c_int scaled_termination_new;
 
-#ifdef DLONG
-    static char * argparse_string = "L";
-#else
     static char * argparse_string = "i";
-#endif
 
     // Check that the solver is initialized
     if (!self->solver) {
@@ -1068,11 +996,7 @@ static PyObject *OSQP_update_check_termination(OSQP *self, PyObject *args){
 
     c_int check_termination_new;
 
-#ifdef DLONG
-    static char * argparse_string = "L";
-#else
     static char * argparse_string = "i";
-#endif
 
     // Check that the solver is initialized
     if (!self->solver) {
@@ -1098,11 +1022,7 @@ static PyObject *OSQP_update_warm_start(OSQP *self, PyObject *args){
 
     c_int warm_start_new;
 
-#ifdef DLONG
-    static char * argparse_string = "L";
-#else
     static char * argparse_string = "i";
-#endif
 
     // Check that the solver is initialized
     if (!self->solver) {

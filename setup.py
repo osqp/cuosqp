@@ -1,4 +1,3 @@
-from __future__ import print_function
 import distutils.sysconfig as sysconfig
 import os
 import shutil as sh
@@ -20,10 +19,7 @@ lib_subdir = []
 
 # Check if windows linux or mac to pass flag
 if system() == 'Windows':
-    if sys.version_info.major == 3:
-        cmake_args += ['-G', 'Visual Studio 15 2017']
-    else:
-        cmake_args += ['-G', 'Visual Studio 9 2008']
+    cmake_args += ['-G', 'Visual Studio 15 2017']
     # Differentiate between 32-bit and 64-bit
     if sys.maxsize // 2 ** 32 > 0:
         cmake_args[-1] += ' Win64'
@@ -38,7 +34,7 @@ else:  # Linux or Mac
 # Pass Python option to CMake and Python interface compilation
 cmake_args += ['-DPYTHON=ON']
 
-# Pass CUDA option to CMake. The code should be faster with floats
+# Pass CUDA options to CMake.
 cmake_args += ['-DCUDA_SUPPORT=ON', '-DDFLOAT=ON', '-DDLONG=OFF']
 
 # Pass python to compiler launched from setup.py

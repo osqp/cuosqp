@@ -32,21 +32,10 @@
 
 
 static PyMemberDef OSQP_info_members[] = {
-#ifdef DLONG
-    {"iter", T_LONGLONG, offsetof(OSQP_info, iter), READONLY, "Number of iterations"},
-#else   // DLONG
     {"iter", T_INT, offsetof(OSQP_info, iter), READONLY, "Number of iterations"},
-#endif  // DLONG
-
     {"status", T_OBJECT, offsetof(OSQP_info, status), READONLY, "Solver status"},
-
-#ifdef DLONG
-    {"status_val",  T_LONGLONG, offsetof(OSQP_info, status_val),  READONLY, "Solver status value"},
-    {"rho_updates", T_LONGLONG, offsetof(OSQP_info, rho_updates), READONLY, "Number of rho updates"},
-#else   // DLONG
     {"status_val",  T_INT, offsetof(OSQP_info, status_val),  READONLY, "Solver status value"},
     {"rho_updates", T_INT, offsetof(OSQP_info, rho_updates), READONLY, "Number of rho updates"},
-#endif  // DLONG
 
 #ifdef DFLOAT
     {"rho_estimate", T_FLOAT, offsetof(OSQP_info, rho_estimate), READONLY, "Optimal rho estimate"},
@@ -54,11 +43,7 @@ static PyMemberDef OSQP_info_members[] = {
     {"rho_estimate", T_DOUBLE, offsetof(OSQP_info, rho_estimate), READONLY, "Optimal rho estimate"},
 #endif  // DFLOAT
 
-#ifdef DLONG
-    {"status_polish", T_LONGLONG, offsetof(OSQP_info, status_polish), READONLY, "Polishing status value"},
-#else   // DLONG
     {"status_polish", T_INT, offsetof(OSQP_info, status_polish), READONLY, "Polishing status value"},
-#endif  // DLONG
 
 #ifdef DFLOAT
     {"obj_val", T_FLOAT, offsetof(OSQP_info, obj_val), READONLY, "Objective value"},
@@ -94,16 +79,6 @@ static PyMemberDef OSQP_info_members[] = {
 static c_int OSQP_info_init( OSQP_info * self, PyObject *args) {
     
 #ifdef PROFILING
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-#ifdef DLONG
-
-#ifdef DFLOAT
-    static char * argparse_string = "LULLfLffffffff";
-#else
-    static char * argparse_string = "LULLdLdddddddd";
-#endif
-
-#else   // DLONG
 
 #ifdef DFLOAT
     static char * argparse_string = "iUiififfffffff";
@@ -111,21 +86,7 @@ static c_int OSQP_info_init( OSQP_info * self, PyObject *args) {
     static char * argparse_string = "iUiididddddddd";
 #endif
 
-#endif  // DLONG
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 #else   // PROFILING
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-
-#ifdef DLONG
-
-#ifdef DFLOAT
-    static char * argparse_string = "LULLfLfff";
-#else
-    static char * argparse_string = "LULLdLddd";
-#endif
-
-#else   // DLONG
 
 #ifdef DFLOAT
     static char * argparse_string = "iUiififff";
@@ -133,9 +94,6 @@ static c_int OSQP_info_init( OSQP_info * self, PyObject *args) {
     static char * argparse_string = "iUiididdd";
 #endif
 
-#endif  // DLONG
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 #endif  // PROFILING
 
     // Parse arguments
