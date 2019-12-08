@@ -87,7 +87,7 @@ class update_matrices_tests(unittest.TestCase):
         nptest.assert_allclose(res.x,
             np.array([0.44557958, 0.11209195, 0.22051994, -0.78051077, -0.01697192]), rtol=1e-5, atol=1e-5)
         nptest.assert_allclose(res.y,
-            np.array([-1.97318457, -1.43719371, 0., -0.05364337, -1.3354648, 0., 0., 0.]), rtol=1e-5, atol=1e-5)
+            np.array([-1.97318457, -1.43719371, 0., -0.05364337, -1.3354648, 0., 0., 0.]), rtol=1e-4, atol=1e-4)
         nptest.assert_allclose(res.info.obj_val, -0.79990427087463, rtol=1e-5, atol=1e-5)
 
     def test_update_A_allind(self):
@@ -100,7 +100,7 @@ class update_matrices_tests(unittest.TestCase):
         nptest.assert_allclose(res.x,
             np.array([0.44557958, 0.11209195, 0.22051994, -0.78051077, -0.01697192]), rtol=1e-5, atol=1e-5)
         nptest.assert_allclose(res.y,
-            np.array([-1.97318457, -1.43719371, 0., -0.05364337, -1.3354648, 0., 0., 0.]), rtol=1e-5, atol=1e-5)
+            np.array([-1.97318457, -1.43719371, 0., -0.05364337, -1.3354648, 0., 0., 0.]), rtol=1e-4, atol=1e-4)
         nptest.assert_allclose(res.info.obj_val, -0.79990427087463, rtol=1e-5, atol=1e-5)
 
     def test_update_P_A_indP_indA(self):
