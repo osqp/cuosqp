@@ -32,6 +32,7 @@ Citing
 If you use cuosqp for research, please cite our accompanying `paper <https://arxiv.org/pdf/1912.04263.pdf>`__:
 
 ::
+
     @article{cuosqp,
     author  = {Schubiger, M. and Banjac, G. and Lygeros, J.},
     title   = {{GPU} acceleration of {ADMM} for large-scale quadratic programming},
