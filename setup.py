@@ -66,6 +66,7 @@ else:
     compile_args = []
 
 # External libraries
+CUDA_PATH = os.environ['CUDA_PATH']
 library_dirs = []
 libraries = []
 if system() == 'Linux':
@@ -73,7 +74,7 @@ if system() == 'Linux':
     libraries += ['cublas']
     libraries += ['cusparse']
     libraries += ['cudart']
-    library_dirs += ['/opt/cuda/lib64']
+    library_dirs += [os.path.join(CUDA_PATH, 'lib64')]
 if system() == 'Windows' and sys.version_info[0] == 3:
     # They moved the stdio library to another place.
     # We need to include this to fix the dependency
@@ -81,7 +82,7 @@ if system() == 'Windows' and sys.version_info[0] == 3:
     libraries += ['cublas']
     libraries += ['cusparse']
     libraries += ['cudart']
-    library_dirs +=["C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v10.1\\lib\\x64"]
+    library_dirs += [os.path.join(CUDA_PATH, 'lib', 'x64')]
 
 # Add OSQP compiled library
 extra_objects = [os.path.join('extension', 'src', lib_name)]
