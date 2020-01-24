@@ -34,15 +34,14 @@ else:  # Linux or Mac
 # Pass Python option to CMake and Python interface compilation
 cmake_args += ['-DPYTHON=ON']
 
-# Pass CUDA options to CMake.
+# Pass CUDA options to CMake
 cmake_args += ['-DCUDA_SUPPORT=ON', '-DDFLOAT=ON', '-DDLONG=OFF']
 
-# Pass python to compiler launched from setup.py
-define_macros += [('PYTHON', None)]
-
-# Pass python version to cmake
-py_version = "%i.%i" % sys.version_info[:2]
+# Pass Python include directory
 cmake_args += ['-DPYTHON_INCLUDE_DIRS=%s' % sysconfig.get_python_inc()]
+
+# Pass Python to compiler launched from setup.py
+define_macros += [('PYTHON', None)]
 
 
 # Define osqp and qdldl directories
@@ -66,23 +65,20 @@ else:
     compile_args = []
 
 # External libraries
-CUDA_PATH = os.environ['CUDA_PATH']
-library_dirs = []
-libraries = []
+libraries = ['cublas', 'cusparse', 'cudart']
 if system() == 'Linux':
     libraries += ['rt']
-    libraries += ['cublas']
-    libraries += ['cusparse']
-    libraries += ['cudart']
-    library_dirs += [os.path.join(CUDA_PATH, 'lib64')]
 if system() == 'Windows' and sys.version_info[0] == 3:
     # They moved the stdio library to another place.
     # We need to include this to fix the dependency
     libraries += ['legacy_stdio_definitions']
-    libraries += ['cublas']
-    libraries += ['cusparse']
-    libraries += ['cudart']
-    library_dirs += [os.path.join(CUDA_PATH, 'lib', 'x64')]
+
+# CUDA libraries
+CUDA_PATH = os.environ['CUDA_PATH']
+if system() == 'Windows':
+    library_dirs = [os.path.join(CUDA_PATH, 'lib', 'x64')]
+else:
+    library_dirs = [os.path.join(CUDA_PATH, 'lib64')]
 
 # Add OSQP compiled library
 extra_objects = [os.path.join('extension', 'src', lib_name)]
