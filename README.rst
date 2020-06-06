@@ -29,14 +29,14 @@ The interface is documented `here <https://osqp.org/docs/interfaces/python.html>
 Citing
 ------
 
-If you use cuosqp for research, please cite our accompanying `paper <https://arxiv.org/pdf/1912.04263.pdf>`__:
+If you use cuosqp for research, please cite our accompanying paper (available in this `preprint <https://arxiv.org/pdf/1912.04263.pdf>`__):
 
 ::
 
-    @article{cuosqp,
-      author  = {Schubiger, M. and Banjac, G. and Lygeros, J.},
-      title   = {{GPU} acceleration of {ADMM} for large-scale quadratic programming},
-      journal = {arXiv:1912.04263},
-      year    = {2019},
-    }
+  @article{cuosqp,
+    author  = {Schubiger, M. and Banjac, G. and Lygeros, J.},
+    title   = {{GPU} acceleration of {ADMM} for large-scale quadratic programming},
+    journal = {Journal of Parallel and Distributed Computing},
+    year    = {2020},
+  }
 
