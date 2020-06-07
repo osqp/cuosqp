@@ -2,7 +2,6 @@
 import cuosqp as osqp
 import numpy as np
 from scipy import sparse
-import scipy as sp
 
 # Unit Test
 import unittest
@@ -50,7 +49,7 @@ class polish_tests(unittest.TestCase):
     def test_polish_unconstrained(self):
 
         # Unconstrained QP problem
-        sp.random.seed(4)
+        np.random.seed(4)
 
         self.n = 30
         self.m = 0
@@ -83,16 +82,16 @@ class polish_tests(unittest.TestCase):
     def test_polish_random(self):
 
         # Random QP problem
-        sp.random.seed(6)
+        np.random.seed(6)
 
         self.n = 30
         self.m = 50
-        Pt = sp.randn(self.n, self.n)
+        Pt = np.random.randn(self.n, self.n)
         self.P = sparse.triu(np.dot(Pt.T, Pt), format='csc')
-        self.q = sp.randn(self.n)
-        self.A = sparse.csc_matrix(sp.randn(self.m, self.n))
-        self.l = -3 + sp.randn(self.m)
-        self.u = 3 + sp.randn(self.m)
+        self.q = np.random.randn(self.n)
+        self.A = sparse.csc_matrix(np.random.randn(self.m, self.n))
+        self.l = -3 + np.random.randn(self.m)
+        self.u = 3 + np.random.randn(self.m)
         self.model = osqp.OSQP()
         self.model.setup(P=self.P, q=self.q, A=self.A, l=self.l, u=self.u,
                          **self.opts)
@@ -119,6 +118,6 @@ class polish_tests(unittest.TestCase):
                 0., 1.37995470e-01, 0., 0., 0.,  -2.04427802e-02,
                 0., -1.32983915e-01, 0., 2.94425952e-02, 0., 0.,
                 0., 0., 0., -6.53409219e-02, 0.]),
-            rtol=1e-6, atol=1e-6)
+            rtol=2e-6, atol=2e-6)
         nptest.assert_allclose(res.info.obj_val, -3.262280663471232, rtol=1e-6, atol=1e-6)
 

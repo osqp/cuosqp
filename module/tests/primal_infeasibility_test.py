@@ -2,7 +2,6 @@
 import cuosqp as osqp
 from cuosqp._osqp import constant
 from scipy import sparse
-import scipy as sp
 import numpy as np
 
 # Unit Test
@@ -12,7 +11,6 @@ import unittest
 class primal_infeasibility_tests(unittest.TestCase):
 
     def setUp(self):
-        sp.random.seed(6)
         """
         Setup primal infeasible problem
         """
@@ -27,21 +25,21 @@ class primal_infeasibility_tests(unittest.TestCase):
     def test_primal_infeasible_problem(self):
 
         # Simple QP problem
-        sp.random.seed(4)
+        np.random.seed(4)
 
         self.n = 50
         self.m = 500
         # Generate random Matrices
         Pt = sparse.random(self.n, self.n)
         self.P = sparse.triu(Pt.T.dot(Pt), format='csc')
-        self.q = sp.randn(self.n)
+        self.q = np.random.randn(self.n)
         self.A = sparse.random(self.m, self.n).tolil()  # Lil for efficiency
-        self.u = 3 + sp.randn(self.m)
-        self.l = -3 + sp.randn(self.m)
+        self.u = 3 + np.random.randn(self.m)
+        self.l = -3 + np.random.randn(self.m)
 
         # Make random problem primal infeasible
         self.A[int(self.n/2), :] = self.A[int(self.n/2)+1, :]
-        self.l[int(self.n/2)] = self.u[int(self.n/2)+1] + 10 * sp.rand()
+        self.l[int(self.n/2)] = self.u[int(self.n/2)+1] + 10 * np.random.rand()
         self.u[int(self.n/2)] = self.l[int(self.n/2)] + 0.5
 
         # Convert A to csc

@@ -2,7 +2,6 @@
 import cuosqp as osqp
 import numpy as np
 from scipy import sparse
-import scipy as sp
 
 # Unit Test
 import unittest
@@ -24,16 +23,16 @@ class warm_start_tests(unittest.TestCase):
     def test_warm_start(self):
 
         # Big problem
-        sp.random.seed(2)
+        np.random.seed(2)
         self.n = 100
         self.m = 200
         self.A = sparse.random(self.m, self.n, density=0.9, format='csc')
-        self.l = -sp.rand(self.m) * 2.
-        self.u = sp.rand(self.m) * 2.
+        self.l = -np.random.rand(self.m) * 2.
+        self.u = np.random.rand(self.m) * 2.
 
         P = sparse.random(self.n, self.n, density=0.9)
         self.P = sparse.triu(P.dot(P.T), format='csc')
-        self.q = sp.randn(self.n)
+        self.q = np.random.randn(self.n)
 
         # Setup solver
         self.model = osqp.OSQP()
