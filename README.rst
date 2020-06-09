@@ -38,6 +38,8 @@ If you use cuosqp for research, please cite our accompanying paper (available in
     title   = {{GPU} acceleration of {ADMM} for large-scale quadratic programming},
     journal = {Journal of Parallel and Distributed Computing},
     year    = {2020},
+    volume  = {144},
+    pages   = {55--67},
     doi     = {10.1016/j.jpdc.2020.05.021},
   }
 
