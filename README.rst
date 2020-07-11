@@ -29,7 +29,7 @@ The interface is documented `here <https://osqp.org/docs/interfaces/python.html>
 Citing
 ------
 
-If you use cuosqp for research, please cite our accompanying paper (available in this `preprint <https://arxiv.org/pdf/1912.04263.pdf>`__):
+If you use cuosqp for research, please cite our accompanying `paper <https://doi.org/10.1016/j.jpdc.2020.05.021>`__:
 
 ::
 

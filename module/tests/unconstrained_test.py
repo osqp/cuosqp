@@ -3,6 +3,7 @@ import cuosqp as osqp
 import numpy as np
 from scipy import sparse
 import scipy as sp
+from numpy.random import Generator, PCG64
 
 # Unit Test
 import unittest
@@ -11,43 +12,41 @@ import numpy.testing as nptest
 
 class unconstrained_tests(unittest.TestCase):
 
-    def setUp(self):
-        """
-        Setup unconstrained quadratic problem
-        """
-        # Unconstrained QP problem
-        sp.random.seed(4)
+  def setUp(self):
+    """
+    Setup unconstrained quadratic problem
+    """
+    # Set random seed for reproducibility
+    rg = Generator(PCG64(1))
 
-        self.n = 30
-        self.m = 0
-        P = sparse.diags(np.random.rand(self.n)) + 0.2*sparse.eye(self.n)
-        self.P = P.tocsc()
-        self.q = np.random.randn(self.n)
-        self.A = sparse.csc_matrix((self.m, self.n))
-        self.l = np.array([])
-        self.u = np.array([])
-        self.opts = {'verbose': False,
-                     'eps_abs': 1e-06,
-                     'eps_rel': 1e-06,
-                     'polish': False}
-        self.model = osqp.OSQP()
-        self.model.setup(P=self.P, q=self.q, A=self.A, l=self.l, u=self.u,
-                         **self.opts)
+    self.n = 30
+    self.m = 0
+    P = sparse.diags(rg.random(self.n)) + 0.2*sparse.eye(self.n)
+    self.P = P.tocsc()
+    self.q = rg.standard_normal(self.n)
+    self.A = sparse.csc_matrix((self.m, self.n))
+    self.l = np.array([])
+    self.u = np.array([])
+    self.opts = {'verbose': False,
+                  'eps_abs': 1e-06,
+                  'eps_rel': 1e-06,
+                  'polish': False}
+    self.model = osqp.OSQP()
+    self.model.setup(self.P, self.q, self.A, self.l, self.u, **self.opts)
 
-    def test_unconstrained_problem(self):
+  def test_unconstrained_problem(self):
+    # Solve problem
+    res = self.model.solve()
 
-        # Solve problem
-        res = self.model.solve()
-
-        # Assert close
-        nptest.assert_allclose(
-            res.x, np.array([
-                -0.61981415, -0.06174194, 0.83824061, -0.0595013, -0.17810828,
-                2.90550031, -1.8901713, -1.91191741, -3.73603446, 1.7530356,
-                -1.67018181, 3.42221944, 0.61263403, -0.45838347, -0.13194248,
-                2.95744794, 5.2902277, -1.42836238, -8.55123842, -0.79093815,
-                0.43418189, -0.69323554, 1.15967924, -0.47821898, 3.6108927,
-                0.03404309, 0.16322926, -2.17974795, 0.32458796, -1.97553574]),
-            rtol=1e-5, atol=1e-5)
-        nptest.assert_allclose(res.y, np.array([]))
-        nptest.assert_allclose(res.info.obj_val, -35.020288603855825, rtol=1e-5, atol=1e-5)
+    # Assert close
+    nptest.assert_allclose(
+        res.x, np.array([
+             0.17221215, -1.84085666,  3.23111929,  0.32873825, -3.99110215,
+            -1.0375029 , -0.64518994,  0.84374114,  2.19862467, -0.73591755,
+            -0.11432888,  1.66275577,  1.28975978,  0.07288708,  1.87750662,
+             0.15037534, -0.28584164, -0.05900426,  1.25488928, -1.28429794,
+            -0.93771052, -0.66786523,  1.19416376, -0.61965718,  0.4316592 ,
+            -0.9506598 ,  1.44596409, -1.91755938,  0.05563106,  1.06737479]),
+        rtol=1e-5, atol=1e-5)
+    nptest.assert_allclose(res.y, np.array([]))
+    nptest.assert_allclose(res.info.obj_val, -17.69727194, rtol=1e-5, atol=1e-5)
