@@ -35,6 +35,7 @@ Make sure the environment variable ``CUDA_PATH`` is set to the CUDA Toolkit inst
 Then run the following commands in your terminal
 
 ::
+
   git clone --recurse-submodules https://github.com/oxfordcontrol/cuosqp
   cd cuosqp
   python setup.py install
