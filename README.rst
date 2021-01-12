@@ -23,9 +23,12 @@ is defined by a positive semidefinite matrix ``P in S^n_+`` and vector
 Installation
 -----------
 You need to install the following:
-- `NVIDIA CUDA Toolkit https://developer.nvidia.com/cuda-downloads`_
-- `CMake https://cmake.org/`_
-- `GCC compiler https://gcc.gnu.org/`_ (Linux) or `Build Tools for Visual Studio 2017 https://visualstudio.microsoft.com/downloads/#build-tools-for-visual-studio-2017`_ (Windows)
+
+* `NVIDIA CUDA Toolkit https://developer.nvidia.com/cuda-downloads`_
+
+* `CMake https://cmake.org/`_
+
+* `GCC compiler https://gcc.gnu.org/`_ (Linux) or `Build Tools for Visual Studio 2017 https://visualstudio.microsoft.com/downloads/#build-tools-for-visual-studio-2017`_ (Windows)
 
 Make sure the environment variable ``CUDA_PATH`` is set to the CUDA Toolkit install directory.
 
