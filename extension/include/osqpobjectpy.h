@@ -215,7 +215,7 @@ static PyObject * OSQP_setup(OSQP *self, PyObject *args, PyObject *kwargs) {
                              "adaptive_rho_tolerance", "adaptive_rho_fraction",
                              "rho", "sigma", "rho_is_vec", "max_iter", "eps_abs", "eps_rel",
                              "eps_prim_inf", "eps_dual_inf", "alpha", "delta",
-                             "linsys_solver", "polish",
+                             "linsys_solver", "algebra_device", "polish",
                              "polish_refine_iter", "verbose",
                              "scaled_termination",
                              "check_termination", "warm_start",
@@ -223,9 +223,9 @@ static PyObject * OSQP_setup(OSQP *self, PyObject *args, PyObject *kwargs) {
 
 
 #ifdef DFLOAT
-    static char * argparse_string = "(ii)O!O!O!O!O!O!O!O!O!|iiiffffiiffffffiiiiiiif";
+    static char * argparse_string = "(ii)O!O!O!O!O!O!O!O!O!|iiiffffiiffffffiiiiiiiif";
 #else
-    static char * argparse_string = "(ii)O!O!O!O!O!O!O!O!O!|iiiddddiiddddddiiiiiiid";
+    static char * argparse_string = "(ii)O!O!O!O!O!O!O!O!O!|iiiddddiiddddddiiiiiiiid";
 #endif
 
 
@@ -257,7 +257,7 @@ static PyObject * OSQP_setup(OSQP *self, PyObject *args, PyObject *kwargs) {
                                      &settings->adaptive_rho_fraction,
                                      &settings->rho,
                                      &settings->sigma,
-				     &settings->rho_is_vec,
+                                     &settings->rho_is_vec,
                                      &settings->max_iter,
                                      &settings->eps_abs,
                                      &settings->eps_rel,
@@ -266,6 +266,7 @@ static PyObject * OSQP_setup(OSQP *self, PyObject *args, PyObject *kwargs) {
                                      &settings->alpha,
                                      &settings->delta,
                                      &settings->linsys_solver,
+                                     &settings->algebra_device,
                                      &settings->polish,
                                      &settings->polish_refine_iter,
                                      &settings->verbose,
