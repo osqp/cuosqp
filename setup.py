@@ -65,7 +65,7 @@ else:
     compile_args = []
 
 # External libraries
-libraries = ['cublas', 'cusparse', 'cudart']
+libraries = ['cublas', 'cusparse', 'cudart', 'stdc++']
 if system() == 'Linux':
     libraries += ['rt']
 if system() == 'Windows' and sys.version_info[0] == 3:
